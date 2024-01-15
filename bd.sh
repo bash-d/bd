@@ -6,12 +6,6 @@
 # https://github.com/bash-d/bd/blob/main/LICENSE.md
 
 #
-# metadata
-#
-
-# bash.d: exports BD_BASH_INIT_FILE BD_DEBUG BD_DIR BD_HOME BD_OS BD_SOURCE BD_USER BD_VERSION
-
-#
 # init
 #
 
@@ -38,15 +32,18 @@ if [ ${BD_CALLERS} -gt ${BD_CALLERS_MAX} ]; then
 fi
 unset -v BD_CALLERS BD_CALLERS_MAX
 
+# automatically export each variable or function that is created or modified
+set -a
+
 #
 # config
 #
 
-export BD_VERSION=0.44.0
+BD_VERSION=0.44.0
 
-export BD_AUTOLOAD_DEFAULT_DIR='etc/bash.d'
+BD_AUTOLOAD_DEFAULT_DIR='etc/bash.d'
 
-export BD_CONFIG_FILE='.bd.conf'
+BD_CONFIG_FILE='.bd.conf'
 
 #
 # functions
@@ -243,7 +240,6 @@ bd_debug() {
 
     return 0
 }
-export -f bd_debug
 
 # colored debug output for milliseconds
 bd_debug_ms() {
@@ -267,7 +263,6 @@ bd_debug_ms() {
 
     return 0
 }
-export -f bd_debug_ms
 
 # (only) add unique, existing directories to the BD_AUTOLOAD_DIRS array (& preserve the natural order)
 bd_load() {
@@ -328,7 +323,7 @@ bd_load_config_dir() {
     unset -v BD_AUTOLOAD_CONFIG_DIRS
 }
 
-# export BD_ environment variables from config file
+# load BD_ environment variables from config file
 bd_load_config_file() {
     bd_debug "${FUNCNAME}(${@})" 55
 
@@ -371,7 +366,7 @@ bd_load_config_file() {
             else
                 [ "${bd_config_file_preload}" != "preload" ] && continue
                 bd_debug "export ${bd_config_file_variable_name}=\"${bd_config_file_variable_value}\"" 15
-                export ${bd_config_file_variable_name}="${bd_config_file_variable_value}"
+                export "${bd_config_file_variable_name}"="${bd_config_file_variable_value}" # does not work with set -a?
             fi
         done < "${bd_config_file_name}"
         unset -v bd_config_file_line bd_config_file_variable_name bd_config_file_variable_value
@@ -623,15 +618,11 @@ bd_unset() {
 
     if [ "${bd_unset_start}" != 'start' ]; then
         # finish
-        if bd_true ${BD_ANSI_EXPORT}; then
-            export -f bd_ansi
-        else
+        if ! bd_true ${BD_ANSI_EXPORT}; then
             unset -f bd_ansi
         fi
 
-        if bd_true ${BD_DEBUG_EXPORT}; then
-            export -f bd_debug bd_debug_ms
-        else
+        if ! bd_true ${BD_DEBUG_EXPORT}; then
             unset -f bd_debug bd_debug_ms
         fi
 
@@ -704,9 +695,9 @@ bd_uptime() {
 # bootstrap
 #
 
-export BD_DEBUG=${BD_DEBUG:-0} # level >0 enables debugging
+BD_DEBUG=${BD_DEBUG:-0} # level >0 enables debugging
 
-export BD_SOURCE="$(bd_realpath "${BASH_SOURCE}")"
+BD_SOURCE="$(bd_realpath "${BASH_SOURCE}")"
 
 #
 # options
@@ -818,7 +809,7 @@ fi
 
 bd_debug "${BD_SOURCE} main started"
 
-export BD_MAIN=1
+BD_MAIN=1
 
 #
 # unset (most of the) included bd- aliases, bd_ functions, & BD_ variables
@@ -832,14 +823,14 @@ bd_unset start
 
 bd_debug "BD_SOURCE = ${BD_SOURCE}" 2
 
-export BD_DIR="${BD_SOURCE%/*}"
+BD_DIR="${BD_SOURCE%/*}"
 
 bd_debug "BD_DIR = ${BD_DIR}" 2
 
 if [ ${#BD_DIR} -gt 0 ] && [ -d "${BD_DIR}" ] && type -P git &> /dev/null; then
-    export BD_GIT_URL="$(cd "${BD_DIR}" && git remote get-url $(git remote 2> /dev/null) 2> /dev/null)"
+    BD_GIT_URL="$(cd "${BD_DIR}" && git remote get-url $(git remote 2> /dev/null) 2> /dev/null)"
 fi
-[ ${#BD_GIT_URL} -eq 0 ] && export BD_GIT_URL="https://github.com/bash-d/bd"
+[ ${#BD_GIT_URL} -eq 0 ] && BD_GIT_URL="https://github.com/bash-d/bd"
 
 bd_debug "BD_GIT_URL = ${BD_GIT_URL}" 2
 
@@ -877,8 +868,6 @@ if type -P uname &> /dev/null; then
     unset -v BD_OS_KERNEL_NAME
 fi
 
-export BD_OS
-
 bd_debug "BD_OS = ${BD_OS}" 1
 
 if [ ${#BD_DEBUG} -gt 0 ]; then
@@ -908,8 +897,6 @@ bd_true ${BD_LEARN} || BD_AUTOLOAD_DIRS=()
 
 [ ${#USER} -eq 0 ] && [ ${#BD_USER} -gt 0 ] && USER=${BD_USER}
 
-export BD_USER
-
 [ "${USER}" != 'root' ] && unset BD_HOME # honor sudo --preserve-env=BD_HOME
 
 [ ${#BD_USER} -eq 0 ] && BD_HOME="/tmp"
@@ -918,8 +905,6 @@ export BD_USER
 [ ${#BD_HOME} -eq 0 ] && [ ${#HOME} -gt 0 ] && BD_HOME=${HOME} # default to ${HOME}
 [ ${#BD_HOME} -eq 0 ] && [ ${#BD_USER} -gt 0 ] && type -P getent &> /dev/null && BD_HOME=$(getent passwd ${BD_USER} 2> /dev/null) && BD_HOME=${BD_HOME%%:*}
 [ ${#BD_HOME} -eq 0 ] && BD_HOME="~"
-
-export BD_HOME
 
 if shopt -q login_shell; then
     # login shell
@@ -930,8 +915,6 @@ fi
 # not a login shell, or it is a login shell and there's no ~/.bash_profile
 [ ${#BD_BASH_INIT_FILE} -eq 0 ] && [ -r "${BD_HOME}/.bashrc" ] && BD_BASH_INIT_FILE="${BD_HOME}/.bashrc"
 [ ${#BD_BASH_INIT_FILE} -eq 0 ] && [ -r "${BD_HOME}/.bash_profile" ] && BD_BASH_INIT_FILE="${BD_HOME}/.bash_profile"
-
-export BD_BASH_INIT_FILE
 
 #
 # load config files
@@ -982,7 +965,6 @@ if [ ${#BD_SOURCE} -gt 0 ] && [ -r "${BD_SOURCE}" ]; then
                 ;;
         esac
     }
-    export -f bd
 fi
 
 bd_aliases

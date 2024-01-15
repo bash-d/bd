@@ -4,12 +4,6 @@
 # https://github.com/bash-d/bd/blob/main/LICENSE.md
 
 #
-# metadata
-#
-
-# bash.d: exports BD_OS_ID BD_OS_MACHINE BD_OS_NAME BD_OS_PATH BD_OS_PLATFORM_ID BD_OS_PRETTY_NAME BD_OS_VARIANT BD_OS_VARIANT_ID BD_OS_VERSION BD_OS_VERSION_ID BD_OS_VERSION_MAJOR
-
-#
 # init
 #
 
@@ -22,11 +16,15 @@ fi
 # BD_OS is set in bd.sh; if it's not set then return
 [ ${#BD_OS} -eq 0 ] && return
 
+# automatically export each variable or function that is created or modified
+set -a
+
 #
 # main
 #
 
 BD_OS_ID=""
+
 unset -v BD_OS_MACHINE BD_OS_NAME BD_OS_PATH BD_OS_PLATFORM_ID BD_OS_PRETTY_NAME BD_OS_VARIANT BD_OS_VARIANT_ID BD_OS_VERSION BD_OS_VERSION_ID BD_OS_VERSION_MAJOR
 
 if [ "${BD_OS}" == 'darwin' ]; then
@@ -98,7 +96,5 @@ if [ ${#BD_OS_ID} -gt 0 ]; then
 else
     BD_OS_ID="unknown"
 fi
-
-export BD_OS_ID BD_OS_MACHINE BD_OS_NAME BD_OS_PATH BD_OS_PLATFORM_ID BD_OS_PRETTY_NAME BD_OS_VARIANT BD_OS_VARIANT_ID BD_OS_VERSION BD_OS_VERSION_ID BD_OS_VERSION_MAJOR
 
 bd_debug "BD_OS_ID = ${BD_OS_ID}" 1

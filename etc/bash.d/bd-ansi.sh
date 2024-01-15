@@ -3,10 +3,6 @@
 # Copyright (C) 2018-2023 Joseph Tingiris <joseph.tingiris@gmail.com>
 # https://github.com/bash-d/bd/blob/main/LICENSE.md
 
-#
-# metadata
-#
-
 # DO NOT USE bd-debug or bd_debug() inside this script!
 
 #
@@ -33,6 +29,9 @@ case "${TERM}" in
             return
         fi
 esac
+
+# automatically export each variable or function that is created or modified
+set -a
 
 #
 # functions
@@ -207,7 +206,6 @@ bd_ansi() {
 
     return 0
 }
-export -f bd_ansi
 
 # display ansi color chart of common names
 bd_ansi_chart() {
@@ -299,4 +297,4 @@ bd_ansi_chart_256_fg() {
     done
 }
 
-export BD_ANSI_SOURCED=1
+BD_ANSI_SOURCED=1

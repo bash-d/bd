@@ -1,6 +1,7 @@
 # 0.44.0 (breaking)
 
-- bd.sh:
+- all: removed metadata
+- all: use set -a rather than explicit exports
 - 00bd.sh: removed; change all references to bd.sh
 
 # 0.43.0
@@ -87,11 +88,9 @@
 - bash.d/bd-ansi.sh: support xterm
 - bash.d/bd-ansi.sh: export bd_ansi()
 - bash.d/bd-os.sh: support BD_OS_ID=cygwin
-- bash.d/bd-os.sh: updated metadata
 - bash.d/bd-root.sh: preserve SSH_AUTH_SOCK if it's set
 - bash.d/bd-root.sh: don't preserve BD_BASH_INIT_FILE
 - bash.d/bd-root.sh: test for executable su
-- bash.d/bd-root.sh: updated metadata
 - bin/bd-ansi: exit if BD_DIR is not set or readable
 - bin/bd-debug: exit if BD_DIR is not set or readable
 
