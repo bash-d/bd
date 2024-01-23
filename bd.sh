@@ -880,7 +880,7 @@ fi
 unset -v BD_AUTOLOAD_CONFIG_DIRS
 
 # TODO: learn requires more testing
-bd_true ${BD_LEARN} || BD_AUTOLOAD_DIRS=()
+bd_true ${BD_LEARN} || export BD_AUTOLOAD_DIRS=()
 
 [ "${EUID}" == '0' ] && USER=root
 
@@ -894,6 +894,8 @@ bd_true ${BD_LEARN} || BD_AUTOLOAD_DIRS=()
 [ ${#BD_USER} -eq 0 ] && [ ${#SUDO_USER} -gt 0 ] && BD_USER=${SUDO_USER}
 [ ${#BD_USER} -eq 0 ] && [ ${#LOGNAME} -gt 0 ] && BD_USER=${LOGNAME}
 
+export BD_USER
+
 [ ${#USER} -eq 0 ] && [ ${#BD_USER} -gt 0 ] && USER=${BD_USER}
 
 [ "${USER}" != 'root' ] && unset BD_HOME # honor sudo --preserve-env=BD_HOME
@@ -904,6 +906,8 @@ bd_true ${BD_LEARN} || BD_AUTOLOAD_DIRS=()
 [ ${#BD_HOME} -eq 0 ] && [ ${#HOME} -gt 0 ] && BD_HOME=${HOME} # default to ${HOME}
 [ ${#BD_HOME} -eq 0 ] && [ ${#BD_USER} -gt 0 ] && type -P getent &> /dev/null && BD_HOME=$(getent passwd ${BD_USER} 2> /dev/null) && BD_HOME=${BD_HOME%%:*}
 [ ${#BD_HOME} -eq 0 ] && BD_HOME="~"
+
+export BD_HOME
 
 if shopt -q login_shell; then
     # login shell
