@@ -30,9 +30,6 @@ case "${TERM}" in
         fi
 esac
 
-# automatically export each variable or function that is created or modified
-set -a
-
 #
 # functions
 #
@@ -297,4 +294,4 @@ bd_ansi_chart_256_fg() {
     done
 }
 
-BD_ANSI_SOURCED=1
+export BD_ANSI_SOURCED=1

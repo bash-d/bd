@@ -1,3 +1,6 @@
+# 0.44.1
+- all: do not use set -a; use explicit exports
+
 # 0.44.0 (breaking)
 
 - all: removed metadata

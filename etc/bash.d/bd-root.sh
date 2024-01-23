@@ -13,35 +13,32 @@ if [ "${0}" == "${BASH_SOURCE}" ]; then
     exit 1
 fi
 
-# automatically export each variable or function that is created or modified
-set -a
-
 #
 # main
 #
 
 if [ "${USER}" != "root" ]; then
     # bash & sudo must be in the default path
-    [ ${#BD_ROOT_BASH_BIN} -eq 0 ] && BD_ROOT_BASH_BIN="$(type -P bash 2> /dev/null)"
+    [ ${#BD_ROOT_BASH_BIN} -eq 0 ] && export BD_ROOT_BASH_BIN="$(type -P bash 2> /dev/null)"
     [ ${#BD_ROOT_BASH_BIN} -eq 0 ] && unset -v BD_ROOT_BASH_BIN
 
-    [ ${#BD_ROOT_SU_BIN} -eq 0 ] && BD_ROOT_SU_BIN="$(type -P su 2> /dev/null)"
+    [ ${#BD_ROOT_SU_BIN} -eq 0 ] && export BD_ROOT_SU_BIN="$(type -P su 2> /dev/null)"
     [ ${#BD_ROOT_SU_BIN} -eq 0 ] && unset -v BD_ROOT_SU_BIN
 
-    [ ${#BD_ROOT_SUDO_BIN} -eq 0 ] && BD_ROOT_SUDO_BIN="$(type -P sudo 2> /dev/null)"
+    [ ${#BD_ROOT_SUDO_BIN} -eq 0 ] && export BD_ROOT_SUDO_BIN="$(type -P sudo 2> /dev/null)"
     [ ${#BD_ROOT_SUDO_BIN} -eq 0 ] && unset -v BD_ROOT_SUDO_BIN
 
     if [ ${#BD_ROOT_BASH_BIN} -gt 0 ] && [ -x "${BD_ROOT_BASH_BIN}" ]; then
         # bash init file must be readable
         if [ "${BD_BASH_INIT_FILE}" != "" ] && [ -r "${BD_BASH_INIT_FILE}" ]; then
             if [ ${#BD_ROOT_SUDO_BIN} -gt 0 ] && [ -x "${BD_ROOT_SUDO_BIN}" ]; then
-                BD_ROOT_SUDO_NOPASSWD=0
+                export BD_ROOT_SUDO_NOPASSWD=0
 
                 if (${BD_ROOT_SUDO_BIN} -vn && ${BD_ROOT_SUDO_BIN} -ln) 2>&1 | grep -qv 'may not' &> /dev/null; then
                     BD_ROOT_SUDO_NOPASSWD=1
                 fi
 
-                BD_ROOT_SUDO_MUST_PRESERVE_ENV="BD_HOME,BD_USER"
+                export BD_ROOT_SUDO_MUST_PRESERVE_ENV="BD_HOME,BD_USER"
                 [ "${BD_ROOT_SUDO_PRESERVE_ENV}" != "" ] && BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",${BD_ROOT_SUDO_PRESERVE_ENV}"
                 [[ "${BD_ROOT_SUDO_MUST_PRESERVE_ENV}" != *",SSH_AUTH_SOCK"* ]] && [ "${SSH_AUTH_SOCK}" != "" ] && BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",SSH_AUTH_SOCK"
 

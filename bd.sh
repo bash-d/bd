@@ -19,8 +19,8 @@ if [ "${0}" == "${BASH_SOURCE}" ]; then
 fi
 
 # prevent recursive execution
-BD_CALLERS_MAX=3
-BD_CALLERS=$((${#BASH_ARGC[@]}-1))
+export BD_CALLERS_MAX=3
+export BD_CALLERS=$((${#BASH_ARGC[@]}-1))
 
 [ ${BD_CALLERS} -gt ${BD_CALLERS_MAX} ] && unset -v BD_CALLERS BD_CALLERS_MAX && return
 
@@ -32,18 +32,15 @@ if [ ${BD_CALLERS} -gt ${BD_CALLERS_MAX} ]; then
 fi
 unset -v BD_CALLERS BD_CALLERS_MAX
 
-# automatically export each variable or function that is created or modified
-set -a
-
 #
 # config
 #
 
-BD_VERSION=0.44.0
+export BD_VERSION=0.44.1
 
-BD_AUTOLOAD_DEFAULT_DIR='etc/bash.d'
+export BD_AUTOLOAD_DEFAULT_DIR='etc/bash.d'
 
-BD_CONFIG_FILE='.bd.conf'
+export BD_CONFIG_FILE='.bd.conf'
 
 #
 # functions
@@ -194,7 +191,7 @@ bd_debug() {
 
     [ ${#1} -eq 0 ] && return 0
 
-    [[ ! "${BD_DEBUG}" =~ ^[0-9]+$ ]] && BD_DEBUG=0
+    [[ ! "${BD_DEBUG}" =~ ^[0-9]+$ ]] && export BD_DEBUG=0
 
     [ "${BD_DEBUG}" == '0' ] && return 0
 
@@ -283,7 +280,7 @@ bd_load() {
 
     bd_debug "2 bd_load_dir_name = ${bd_load_dir_name}" 6
 
-    [ ${#BD_AUTOLOAD_DIRS} -eq 0 ] && BD_AUTOLOAD_DIRS=()
+    [ ${#BD_AUTOLOAD_DIRS} -eq 0 ] && export BD_AUTOLOAD_DIRS=()
 
     local bd_load_dir_exists=0 # false
 
@@ -466,8 +463,8 @@ bd_realpath() {
 
     [ ${#bd_realpath_arg} -eq 0 ] && return 1
 
-    [ -z "${BD_REALPATH}" ] && type -P realpath &> /dev/null && BD_REALPATH="realpath" # preferred per GNU
-    [ -z "${BD_REALPATH}" ] && type -P realpath &> /dev/null && BD_REALPATH="readlink -f "
+    [ -z "${BD_REALPATH}" ] && type -P realpath &> /dev/null && export BD_REALPATH="realpath" # preferred per GNU
+    [ -z "${BD_REALPATH}" ] && type -P realpath &> /dev/null && export BD_REALPATH="readlink -f "
 
     if [ -z "${BD_REALPATH}" ]; then
         # NOTE: this logic covers most use cases, but not all.
@@ -695,9 +692,9 @@ bd_uptime() {
 # bootstrap
 #
 
-BD_DEBUG=${BD_DEBUG:-0} # level >0 enables debugging
+export BD_DEBUG=${BD_DEBUG:-0} # level >0 enables debugging
 
-BD_SOURCE="$(bd_realpath "${BASH_SOURCE}")"
+export BD_SOURCE="$(bd_realpath "${BASH_SOURCE}")"
 
 #
 # options
@@ -809,7 +806,7 @@ fi
 
 bd_debug "${BD_SOURCE} main started"
 
-BD_MAIN=1
+export BD_MAIN=1
 
 #
 # unset (most of the) included bd- aliases, bd_ functions, & BD_ variables
@@ -823,7 +820,7 @@ bd_unset start
 
 bd_debug "BD_SOURCE = ${BD_SOURCE}" 2
 
-BD_DIR="${BD_SOURCE%/*}"
+export BD_DIR="${BD_SOURCE%/*}"
 
 bd_debug "BD_DIR = ${BD_DIR}" 2
 
@@ -831,6 +828,8 @@ if [ ${#BD_DIR} -gt 0 ] && [ -d "${BD_DIR}" ] && type -P git &> /dev/null; then
     BD_GIT_URL="$(cd "${BD_DIR}" && git remote get-url $(git remote 2> /dev/null) 2> /dev/null)"
 fi
 [ ${#BD_GIT_URL} -eq 0 ] && BD_GIT_URL="https://github.com/bash-d/bd"
+
+export BD_GIT_URL
 
 bd_debug "BD_GIT_URL = ${BD_GIT_URL}" 2
 
@@ -844,7 +843,7 @@ bd_load_config_files preload
 # determine operating system; set BD_OS variables
 #
 
-BD_OS='unknown'
+export BD_OS='unknown'
 
 if type -P uname &> /dev/null; then
     BD_OS_KERNEL_NAME="$(uname -s 2> /dev/null)"
@@ -871,7 +870,7 @@ fi
 bd_debug "BD_OS = ${BD_OS}" 1
 
 if [ ${#BD_DEBUG} -gt 0 ]; then
-    BD_START_TIME=$(bd_uptime)
+    export BD_START_TIME=$(bd_uptime)
 fi
 
 #
@@ -915,6 +914,8 @@ fi
 # not a login shell, or it is a login shell and there's no ~/.bash_profile
 [ ${#BD_BASH_INIT_FILE} -eq 0 ] && [ -r "${BD_HOME}/.bashrc" ] && BD_BASH_INIT_FILE="${BD_HOME}/.bashrc"
 [ ${#BD_BASH_INIT_FILE} -eq 0 ] && [ -r "${BD_HOME}/.bash_profile" ] && BD_BASH_INIT_FILE="${BD_HOME}/.bash_profile"
+
+export BD_BASH_INIT_FILE
 
 #
 # load config files
@@ -976,9 +977,9 @@ bd_aliases
 bd_autoload "${BD_AUTOLOAD_DIRS[@]}"
 
 if [ ${#BD_DEBUG} -gt 0 ]; then
-    BD_FINISH_TIME=$(bd_uptime 2> /dev/null)
+    export BD_FINISH_TIME=$(bd_uptime 2> /dev/null)
     [[ "${BD_START_TIME}" =~ ^[0-9]+$ ]] && [[ "${BD_FINISH_TIME}" =~ ^[0-9]+$ ]] && BD_TOTAL_TIME=$((${BD_FINISH_TIME}-${BD_START_TIME}))
-    BD_TOTAL_TIME_MS="$(bd_debug_ms ${BD_TOTAL_TIME} 2> /dev/null)"
+    export BD_TOTAL_TIME_MS="$(bd_debug_ms ${BD_TOTAL_TIME} 2> /dev/null)"
 
     bd_debug "${BD_SOURCE} main finished ${BD_TOTAL_TIME_MS}" 0
 
