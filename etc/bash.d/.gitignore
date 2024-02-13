@@ -1,0 +1,5 @@
+*
+!.gitignore
+!bd-ansi.sh
+!bd-os.sh
+!bd-root.sh
