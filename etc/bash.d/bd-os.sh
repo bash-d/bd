@@ -1,6 +1,28 @@
-# bd-os.sh: set additional variables that identify the operating system details
+# bd-os.sh: set additional BD_OS_ values that identify the operating system details
 
-# Copyright (C) 2018-2023 Joseph Tingiris <joseph.tingiris@gmail.com>
+# MIT License
+# ===========
+#
+# Copyright (C) 2018-2024 Joseph Tingiris <joseph.tingiris@gmail.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
 # https://github.com/bash-d/bd/blob/main/LICENSE.md
 
 #
@@ -37,39 +59,39 @@ fi
 if [ "${BD_OS}" == 'linux' ]; then
     if [ ${#BD_OS_ID} -eq 0 ] && [ -r /etc/os-release ]; then
         OIFS="${IFS}"
-        while IFS='=' read -r BD_OS_RELEASE_KEY BD_OS_RELEASE_VALUE; do 
+        while IFS='=' read -r BD_OS_RELEASE_KEY BD_OS_RELEASE_VALUE; do
             BD_OS_RELEASE_VALUE=${BD_OS_RELEASE_VALUE//\"}
-            if [ "${BD_OS_RELEASE_KEY}" == 'ID' ]; then 
+            if [ "${BD_OS_RELEASE_KEY}" == 'ID' ]; then
                 BD_OS_ID="${BD_OS_RELEASE_VALUE}"
-            fi 
+            fi
 
-            if [ "${BD_OS_RELEASE_KEY}" == 'NAME' ]; then 
+            if [ "${BD_OS_RELEASE_KEY}" == 'NAME' ]; then
                 BD_OS_NAME="${BD_OS_RELEASE_VALUE}"
-            fi 
+            fi
 
-            if [ "${BD_OS_RELEASE_KEY}" == 'PLATFORM_ID' ]; then 
+            if [ "${BD_OS_RELEASE_KEY}" == 'PLATFORM_ID' ]; then
                 BD_OS_PLATFORM_ID="${BD_OS_RELEASE_VALUE}"
-            fi 
+            fi
 
-            if [ "${BD_OS_RELEASE_KEY}" == 'PRETTY_NAME' ]; then 
+            if [ "${BD_OS_RELEASE_KEY}" == 'PRETTY_NAME' ]; then
                 BD_OS_PRETTY_NAME="${BD_OS_RELEASE_VALUE}"
-            fi 
+            fi
 
-            if [ "${BD_OS_RELEASE_KEY}" == 'VARIANT' ]; then 
+            if [ "${BD_OS_RELEASE_KEY}" == 'VARIANT' ]; then
                 BD_OS_VARIANT="${BD_OS_RELEASE_VALUE}"
-            fi 
+            fi
 
-            if [ "${BD_OS_RELEASE_KEY}" == 'VARIANT_ID' ]; then 
+            if [ "${BD_OS_RELEASE_KEY}" == 'VARIANT_ID' ]; then
                 BD_OS_VARIANT_ID="${BD_OS_RELEASE_VALUE}"
-            fi 
+            fi
 
-            if [ "${BD_OS_RELEASE_KEY}" == 'VERSION' ]; then 
+            if [ "${BD_OS_RELEASE_KEY}" == 'VERSION' ]; then
                 BD_OS_VERSION="${BD_OS_RELEASE_VALUE}"
-            fi 
+            fi
 
-            if [ "${BD_OS_RELEASE_KEY}" == 'VERSION_ID' ]; then 
+            if [ "${BD_OS_RELEASE_KEY}" == 'VERSION_ID' ]; then
                 BD_OS_VERSION_ID="${BD_OS_RELEASE_VALUE}"
-            fi 
+            fi
         done < /etc/os-release
         unset -v BD_OS_RELEASE_KEY BD_OS_RELEASE_VALUE
         IFS="${OIFS}" && unset OIFS
@@ -96,4 +118,4 @@ fi
 
 export BD_OS BD_OS_ID BD_OS_MACHINE BD_OS_NAME BD_OS_PATH BD_OS_PLATFORM_ID BD_OS_PRETTY_NAME BD_OS_VARIANT BD_OS_VARIANT_ID BD_OS_VERSION BD_OS_VERSION_ID BD_OS_VERSION_MAJOR
 
-bd_debug "BD_OS_ID = ${BD_OS_ID}" 1
+_bd_debug "BD_OS_ID = ${BD_OS_ID}" 1

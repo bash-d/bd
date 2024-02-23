@@ -2,7 +2,29 @@
 
 # bd-ansi: executable wrapper for bash.d/bd-ansi.sh
 
-# Copyright (C) 2018-2023 Joseph Tingiris <joseph.tingiris@gmail.com>
+# MIT License
+# ===========
+#
+# Copyright (C) 2018-2024 Joseph Tingiris <joseph.tingiris@gmail.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
 # https://github.com/bash-d/bd/blob/main/LICENSE.md
 
 #
@@ -16,8 +38,8 @@ if [ "${0}" != "${BASH_SOURCE}" ]; then
 fi
 
 # display (cli) usage options
-bd_ansi_usage() {
-    printf "\nusage: ${BASH_SOURCE} <code|chart[_16|_256][_fg|_bg]>\n\n"
+_bd_ansi_usage() {
+    printf "\nusage: ${BASH_SOURCE} <color code|chart[_16|_256][_fg|_bg]>\n\n"
     exit 99
 }
 
@@ -31,23 +53,45 @@ bd_ansi_usage() {
 
 source "${BD_DIR}/etc/bash.d/bd-ansi.sh"
 
-# may be executed or sourced
-[ "${1}" == "" ] && bd_ansi_usage
+[ "${1}" == "" ] && _bd_ansi_usage
 
 BD_ANSI_FUNCTION=0
 
-[ "${1}" == "chart" ] && BD_ANSI_FUNCTION=1 && bd_ansi_chart
+case "${1}" in
+    chart)
+        BD_ANSI_FUNCTION=1
+        _bd_ansi_chart
+        ;;
+    chart_16)
+        BD_ANSI_FUNCTION=1
+        _bd_ansi_chart_16
+        ;;
+    chart_16_bg)
+        BD_ANSI_FUNCTION=1
+        _bd_ansi_chart_16_bg
+        ;;
+    chart_16_fg)
+        BD_ANSI_FUNCTION=1
+        _bd_ansi_chart_16_fg
+        ;;
+    chart_256)
+        BD_ANSI_FUNCTION=1
+        _bd_ansi_chart_256
+        ;;
+    chart_256_bg)
+        BD_ANSI_FUNCTION=1
+        _bd_ansi_chart_256_bg
+        ;;
+    chart_256_fg)
+        BD_ANSI_FUNCTION=1
+        _bd_ansi_chart_256_fg
+        ;;
+    help|--help|usage)
+        BD_ANSI_FUNCTION=1
+        _bd_ansi_usage
+        ;;
+esac
 
-[ "${1}" == "chart_16" ] && BD_ANSI_FUNCTION=1 && bd_ansi_chart_16
-[ "${1}" == "chart_16_bg" ] && BD_ANSI_FUNCTION=1 && bd_ansi_chart_16_bg
-[ "${1}" == "chart_16_fg" ] && BD_ANSI_FUNCTION=1 && bd_ansi_chart_16_fg
-
-[ "${1}" == "chart_256" ] && BD_ANSI_FUNCTION=1 && bd_ansi_chart_256
-[ "${1}" == "chart_256_bg" ] && BD_ANSI_FUNCTION=1 && bd_ansi_chart_256_bg
-[ "${1}" == "chart_256_fg" ] && BD_ANSI_FUNCTION=1 && bd_ansi_chart_256_fg
-
-[ "${1}" == "" ] || [ "${1}" == "usage" ] && BD_ANSI_FUNCTION=1 && bd_ansi_usage
-
-[ ${BD_ANSI_FUNCTION} -eq 0 ] && bd_ansi ${@}
+[ ${BD_ANSI_FUNCTION} -eq 0 ] && _bd_ansi ${@}
 
 exit $?

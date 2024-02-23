@@ -1,3 +1,22 @@
+# 0.45.0
+- all: all functions are now prefixed with _bd_ except bd()
+- all: embed MIT license text
+- all: began adopting some of [Google's Shell Style Guide](https://google.github.io/styleguide/shellguide.html)
+- bd.sh: renamed BD_AUTOLOAD_DEFAULT_DIR to BD_AUTOLOAD_SUB_DIR
+- bd.sh: added support for 'install' option
+- bd.sh: no more aliases at all. only unset bd alias if it exists.
+- etc/bash.d/bd-deprecated.sh: deprecated bd-ansi() and bd-debug()
+- etc/bash.d/bd-completion.sh: added
+- etc/bash.d/bd-deprecated.sh: added
+- etc/bash.d/bd-option.sh: added
+- etc/bash.d/bd-option-help.sh: added
+- etc/bash.d/bd-option-license.sh: added
+- etc/bash.d/bd-option-snippet.sh: added
+- etc/bash.d/bd-option-upgrade.sh: added
+- example/.bashrc: renamed
+- example/.bash_profile: renamed
+- example/.bd.conf: added
+
 # 0.44.1
 - all: do not use set -a; use explicit exports
 

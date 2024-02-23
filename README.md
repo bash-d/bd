@@ -2,18 +2,26 @@
 
 bash directory (bash.d) autoloader
 
+# why?
+
+It started as a project to reduce the size and complexity of .bash_profile and .bashrc files.  `bd` evolved into a build dependency for other source controled projects because it facilitates the simple use of specific, controlled bits of shell alongside/within other build environments.
+
+For example, create an etc/bash.d within a git repo and put specifics there and then type `bd`.  These are bits most people don't need in their environment _all_ the time, but certainly help in that directory's context.  With little effort, `bd` eventually brought some much needed organization to my personal shell and build environments for other projects.  I use it a lot and thought others might find a use for it too.
+
+I hope this project continues to evolve and grow into a more useful replacement for the archaic /etc/profile environments that are (still) propagated via most linux distributions today.
+
 # installing
 
 ### what you will probably want to do
 
 ```
-curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bin/bd-install | bash -s _ append
+curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ append
 ```
 
 ### what I do
 
 ```
-curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bin/bd-install | bash -s _ replace
+curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace
 ```
 
 ### try it
@@ -30,14 +38,11 @@ curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bin/bd-install | bash 
 
 ## supported environment variables
 
-* `BD_DEBUG` = `<level>` # Integer > 0.  Enable additional output to stderr.
-* `BD_ANSI_EXPORT` = `1` # 1, true, or yes will export the function `bd_ansi()` to the environment (for use in other scripts).
-* `BD_DEBUG_EXPORT` = `1` # 1, true, or yes will export the function `bd_debug()` to the environment (for use in other scripts).
-* `BD_LEARN` = `1` # Use 1, true, or yes to leave the BD_BAG_DIRS() array set when bd is re-sourced.
+see [.bd.conf](https://github.com/bash-d/bd/blob/main/example/.bd.conf)
 
 ## license
 
-https://github.com/bash-d/bd/blob/main/LICENSE.md
+[MIT](https://github.com/bash-d/bd/blob/main/LICENSE.md)
 
 ## notes
 

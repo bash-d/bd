@@ -1,6 +1,28 @@
 # bd-ansi.sh: display a message that's ansi colorized/formatted
 
-# Copyright (C) 2018-2023 Joseph Tingiris <joseph.tingiris@gmail.com>
+# MIT License
+# ===========
+#
+# Copyright (C) 2018-2024 Joseph Tingiris <joseph.tingiris@gmail.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
 # https://github.com/bash-d/bd/blob/main/LICENSE.md
 
 # DO NOT USE bd-debug or bd_debug() inside this script!
@@ -35,7 +57,7 @@ esac
 #
 
 # echo ansi codes using common names
-bd_ansi() {
+_bd_ansi() {
     local bd_ansi="${1}"
 
     [ ${#bd_ansi} -eq 0 ] && return 0
@@ -191,7 +213,7 @@ bd_ansi() {
         fg*) bd_ansi=${bd_ansi/fg/}; bd_ansi=${bd_ansi//_/}; [[ "${bd_ansi}" =~ ^[0-9]+$ ]] && echo -ne "\e[38;5;${bd_ansi}m" ;;
 
         *)
-            echo "${FUNCNAME} has no bd_ansi for '${bd_ansi}'" 1>&2
+            echo "${FUNCNAME} has no case for '${bd_ansi}'" 1>&2
             ;;
     esac
 
@@ -205,7 +227,7 @@ bd_ansi() {
 }
 
 # display ansi color chart of common names
-bd_ansi_chart() {
+_bd_ansi_chart() {
     local bd_ansi_color_name
     local bd_ansi_color_names=()
 
@@ -238,12 +260,12 @@ bd_ansi_chart() {
                 continue
             fi
         fi
-        bd_ansi ${bd_ansi_color_name} ${bd_ansi_color_name}
+        _bd_ansi ${bd_ansi_color_name} ${bd_ansi_color_name}
     done
 }
 
 # display full 16 color chart of echo -ne pastable strings
-bd_ansi_chart_16() {
+_bd_ansi_chart_16() {
     for bd_ansi_bg in {40..47} {100..107} 49; do
         for bd_ansi_fg in {30..37} {90..97} 39; do
             for bd_ansi_format in 0 1 2 4 5 7; do
@@ -256,26 +278,26 @@ bd_ansi_chart_16() {
 }
 
 # display background 16 color chart of echo -ne pastable strings
-bd_ansi_chart_16_bg() {
+_bd_ansi_chart_16_bg() {
     for bd_ansi_bg in {40..47} {100..107}; do
         echo -ne "\e[${bd_ansi_bg}m \\\e[${bd_ansi_bg}m \e[0m" && echo
     done
 }
 
 # display foreground 16 color chart of echo -ne pastable strings
-bd_ansi_chart_16_fg() {
+_bd_ansi_chart_16_fg() {
     for bd_ansi_fg in {30..37} {90..97}; do
         echo -ne "\e[${bd_ansi_fg}m \\\e[${bd_ansi_fg}m \e[0m" && echo
     done
 }
 
 # display full 256 color chart of echo -ne pastable strings
-bd_ansi_chart_256() {
-    bd_ansi_chart_256_fg && echo && bd_ansi_chart_256_bg
+_bd_ansi_chart_256() {
+    _bd_ansi_chart_256_fg && echo && _bd_ansi_chart_256_bg
 }
 
 # display background 256 color chart of echo -ne pastable strings
-bd_ansi_chart_256_bg() {
+_bd_ansi_chart_256_bg() {
     for bd_ansi_color in {0..255}; do
         echo -ne "\e[48;5;${bd_ansi_color}m \\\e[48;5;${bd_ansi_color}m \e[0m"
         if [ $(((${bd_ansi_color} + 1) % 6)) == 4 ]; then
@@ -285,7 +307,7 @@ bd_ansi_chart_256_bg() {
 }
 
 # display foreground 256 color chart of echo -ne pastable strings
-bd_ansi_chart_256_fg() {
+_bd_ansi_chart_256_fg() {
     for bd_ansi_color in {0..255}; do
         echo -ne "\e[38;5;${bd_ansi_color}m \\\e[38;5;${bd_ansi_color}m \e[0m"
         if [ $(((${bd_ansi_color} + 1) % 6)) == 4 ]; then

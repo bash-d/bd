@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+# bd-deprecated.sh: maintain backward compatibility
 
 # MIT License
 # ===========
@@ -22,13 +22,34 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+#
+# https://github.com/bash-d/bd/blob/main/LICENSE.md
 
+#
+# init
+#
+
+# prevent non-sourced execution
 if [ "${0}" == "${BASH_SOURCE}" ]; then
-    BD_ECHO_LICENSE=1
+    printf "\n${BASH_SOURCE} | ERROR | this code is not designed to be executed (instead, 'source ${BASH_SOURCE}')\n\n"
+    exit 1
 fi
 
-if [ "${BD_ECHO_LICENSE}" == "1" ]; then
-    echo
-    cat "${BASH_SOURCE}" | grep ^'#' | grep -v '^#!'
-    echo
-fi
+# prevent loading multiple times
+[ "${BD_DEPRECATED_SOURCED}" == "1" ] && return
+
+#
+# main
+#
+
+# < 0.45.0
+bd_ansi() {
+    _bd_ansi ${@}
+}
+
+# < 0.45.0
+bd_debug() {
+    _bd_debug ${@}
+}
+
+export BD_DEPRECATED_SOURCED=1

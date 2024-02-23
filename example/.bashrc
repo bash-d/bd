@@ -50,7 +50,6 @@ else
     # support normal user
 
     export BD_DIR=~/.bd
-
     export BD_GIT_URL=${BD_GIT_URL:-"https://github.com/bash-d/bd"}
 
     # if bd.sh is not found, try to automatically install bd
