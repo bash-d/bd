@@ -260,9 +260,9 @@ if [ "${BD_INSTALL_APPEND}" == "1" ]; then
             fi
 
             echo >> ~/.bashrc
-            echo "source \"${BD_DIR}/bd.sh\" \${@}" >> ~/.bashrc
+            echo ". \"${BD_DIR}/bd.sh\" \${@}" >> ~/.bashrc
             if [ $? -ne 0 ]; then
-                echo "# [ERROR] ... 'echo "source \"${BD_DIR}/bd.sh\" \${@}" >> ~/.bashrc' failed"
+                echo "# [ERROR] ... 'echo ". \"${BD_DIR}/bd.sh\" \${@}" >> ~/.bashrc' failed"
                 if [ "${0}" == "bash" ] && [ "${BASH_SOURCE}" == "" ]; then
                     exit 1
                 else
@@ -346,7 +346,10 @@ if [ "${BD_INSTALL_REPLACE}" == "1" ]; then
 fi
 
 if [ "${0}" == "bash" ] && [ "${BASH_SOURCE}" == "" ]; then
+    echo exit
     exit $?
 else
+    echo return
+    . ~/.bash_profile
     return $?
 fi
