@@ -346,10 +346,8 @@ if [ "${BD_INSTALL_REPLACE}" == "1" ]; then
 fi
 
 if [ "${0}" == "bash" ] && [ "${BASH_SOURCE}" == "" ]; then
-    echo exit
     exit $?
 else
-    echo return
     . ~/.bash_profile
     return $?
 fi
