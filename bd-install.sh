@@ -151,7 +151,7 @@ if [ "${BD_INSTALL_EXISTS}" == "1" ]; then
 
     git pull -b ${BD_INSTALL_BRANCH} ${BD_DIR} &> /dev/null
     if [ $? -ne 0 ]; then
-        echo "# [ERROR] ... 'git pull ${BD_DIR}' failed" && cd "${BD_INSTALL_PWD}"
+        echo "# [ERROR] ... 'git pull -b ${BD_INSTALL_BRANCH} ${BD_DIR}' failed" && cd "${BD_INSTALL_PWD}"
         if [ "${0}" == "bash" ] && [ "${BASH_SOURCE}" == "" ]; then
             exit 1
         else
@@ -162,9 +162,9 @@ if [ "${BD_INSTALL_EXISTS}" == "1" ]; then
     cd "${BD_INSTALL_PWD}"
     unset -v BD_INSTALL_PWD
 
-    echo "# [OK] ... git pull -b ${BD_INSTALL_BRANCH} ${BD_DIR} '${BD_GIT_URL}' pulled"
+    echo "# [OK] ... 'git pull -b ${BD_INSTALL_BRANCH} ${BD_DIR} ' pulled"
 else
-    echo git clone -b ${BD_INSTALL_BRANCH} ${BD_GIT_URL} ${BD_DIR} && echo
+    echo "# [OK] git clone -b ${BD_INSTALL_BRANCH} ${BD_GIT_URL} ${BD_DIR}" && echo
     git clone -b ${BD_INSTALL_BRANCH} ${BD_GIT_URL} ${BD_DIR} && echo
     if [ $? -ne 0 ]; then
         echo "# [ERROR] ... 'git clone -b ${BD_INSTALL_BRANCH} ${BD_GIT_URL} ${BD_DIR}' failed"
@@ -175,7 +175,7 @@ else
         fi
     fi
 
-    echo "# [OK] ... '-b ${BD_INSTALL_BRANCH} ${BD_GIT_URL}' installed"
+    echo "# [OK] ... '${BD_GIT_URL}/tree/${BD_INSTALL_BRANCH}' installed"
 fi
 echo
 
