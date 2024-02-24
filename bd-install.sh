@@ -25,20 +25,24 @@
 #
 # https://github.com/bash-d/bd/blob/main/LICENSE.md
 
-# usage example
+# usage examples
 #
 # curl -Ls file:///${BD_DIR}/bd-install.sh | bash -s _ replace
 # curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace
+# curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | bash -s _ replace
 
-export BD_INSTALL_GIT_URL=${BD_INSTALL_GIT_URL:-"https://githubusercontent.com/bash-d/bd/main/bd-install.sh"}
+BD_INSTALL_BRANCH="main"
+BD_INSTALL_BRANCH="0.45.0"
+
+export BD_GIT_URL=${BD_GIT_URL:-"https://github.com/bash-d/bd/tree/${BD_INSTALL_BRANCH}"}
 
 #
 # init
 #
 
-# prevent sourced execution
+# prevent execution
 if [ "${0}" == "${BASH_SOURCE}" ]; then
-    printf "\n${BASH_SOURCE} | ERROR | this code is designed to be sourced\n\n"
+    printf "\n${BASH_SOURCE} | ERROR | this code is not designed to be executed\n\n"
     exit 1
 fi
 
@@ -57,7 +61,7 @@ _bd_install_usage() {
 #
 
 if [ "${USER}" == "root" ]; then
-    echo "root/system installation is currently WIP; run ${0} as a normal user"
+    echo "root/system installation is currently WIP; please run ${0} as a normal user"
     if [ "${0}" == "bash" ] && [ "${BASH_SOURCE}" == "main" ]; then
         exit 1
     else
@@ -88,9 +92,9 @@ BD_INSTALL_REQUIRED+=("grep")
 BD_INSTALL_REQUIRED+=("mkdir")
 
 for BD_INSTALL_REQUIRE in ${BD_INSTALL_REQUIRED[@]}; do
-    # ensure gnu dependency
+    # ensure dependency
     if ! type -P ${BD_INSTALL_REQUIRE} &> /dev/null; then
-        echo "# [ERROR] ... '${BD_INSTALL_REQUIRE}' executable not found; install gnu ${BD_INSTALL_REQUIRE}"
+        echo "# [ERROR] ... '${BD_INSTALL_REQUIRE}' executable not found; install ${BD_INSTALL_REQUIRE}"
         if [ "${0}" == "bash" ] && [ "${BASH_SOURCE}" == "" ]; then
             exit 1
         else
@@ -98,7 +102,7 @@ for BD_INSTALL_REQUIRE in ${BD_INSTALL_REQUIRED[@]}; do
         fi
     fi
 
-    # ensure gnu dependency works
+    # ensure dependency works
     if ! ${BD_INSTALL_REQUIRE} --version 2>&1 | grep -q ^${BD_INSTALL_REQUIRE}; then
         echo "# [ERROR] ... '${BD_INSTALL_REQUIRE}' executable not working as expected"
         if [ "${0}" == "bash" ] && [ "${BASH_SOURCE}" == "" ]; then
@@ -141,7 +145,6 @@ fi
 echo "# [OK] ... '${BD_DIR}' directory found"
 echo
 
-export BD_GIT_URL=${BD_GIT_URL:-"https://github.com/bash-d/bd"}
 
 if [ "${BD_INSTALL_EXISTS}" == "1" ]; then
     BD_INSTALL_PWD="${PWD}"
