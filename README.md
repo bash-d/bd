@@ -2,21 +2,21 @@
 
 bash directory (bash.d) autoloader
 
-# installing
+## installing
 
-### what you will probably want to do
-
-```
-curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ append
-```
-
-### what I do
+### automatically replace ~/.bash_profile and ~/.bashrc (what I do)
 
 ```
-curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace
+curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace # this makes a backup, too
 ```
 
-### try it
+### automatically append to ~/.bash_profile and ~/.bashrc
+
+```
+curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ append # this makes a backup, too
+```
+
+### manual
 
 1) clone `bd` into your home directory
     ```sh
@@ -28,10 +28,6 @@ curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -
     [ -r ~/.bd/bd.sh ] && source ~/.bd/bd.sh ${@}
     ```
 
-## supported environment variables
-
-see [.bd.conf](https://github.com/bash-d/bd/blob/main/example/.bd.conf)
-
 ## license
 
 [MIT](https://github.com/bash-d/bd/blob/main/LICENSE.md)
@@ -40,9 +36,4 @@ see [.bd.conf](https://github.com/bash-d/bd/blob/main/example/.bd.conf)
 
 ## why?
 
-This started as a project to reduce the size and complexity of single .bash_profile and .bashrc files.  Then `bd` evolved into a build dependency for other projects.  It facilitates the simple use of specific, controlled bits of shell alongside/within other build environments.
-
-For example, create an etc/bash.d within a git repo and put specifics there and then type `bd`.  These are bits most people don't need in their environment _all_ the time, but certainly help in that directory's context.  With little effort, `bd` eventually brought some much needed organization to my personal shell and build environments for other projects.  I use it a lot and thought others might find a use for it too.
-
-I hope continues to evolve and grow into a more useful replacement for the archaic /etc/profile environments that are (still) propagated via most linux distributions today.
-
+`~/etc/bash.d` started as a idea to reduce the size of a .bash_profile and/or .bashrc, like an alternate or personal /etc/profile.d.  I think that concept makes it easier to use specific bits of shell in different environments.  For me, `bd` eventually brought some much needed organization to my personal shell and numerous build environments.
