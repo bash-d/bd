@@ -175,7 +175,7 @@ else
         fi
     fi
 
-    echo "# [OK] ... '${BD_GIT_URL}/tree/${BD_INSTALL_BRANCH}' installed"
+    echo "# [OK] ... '${BD_GIT_URL}tree/${BD_INSTALL_BRANCH}' installed"
 fi
 echo
 
