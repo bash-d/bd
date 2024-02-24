@@ -31,7 +31,7 @@
 # curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace
 # curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | bash -s _ replace
 
-export BD_INSTALL_BRANCH=${BD_INSTALL_BRANCH:-main}
+export BD_INSTALL_BRANCH=${BD_INSTALL_BRANCH:-'main'}
 
 export BD_GIT_URL="https://github.com/bash-d/bd/"
 
@@ -41,7 +41,7 @@ export BD_GIT_URL="https://github.com/bash-d/bd/"
 
 # prevent execution
 if [ "${0}" == "${BASH_SOURCE}" ]; then
-    printf "\n${BASH_SOURCE} | ERROR | this code is not designed to be executed\n\n"
+    printf "\n${BASH_SOURCE} | ERROR | this code is not designed to be executed (try '. ${BASH_SOURCE}')\n\n"
     exit 1
 fi
 
