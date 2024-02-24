@@ -34,11 +34,7 @@
 export BD_INSTALL_BRANCH="main"
 export BD_INSTALL_BRANCH="0.45.0"
 
-echo "BD_INSTALL_BRANCH = ${BD_INSTALL_BRANCH}"
-
 export BD_GIT_URL="https://github.com/bash-d/bd/"
-
-echo "BD_GIT_URL        = ${BD_GIT_URL}"
 
 #
 # init
@@ -52,6 +48,9 @@ fi
 
 # display (cli) usage options
 _bd_install_usage() {
+echo "BD_INSTALL_BRANCH = ${BD_INSTALL_BRANCH}"
+echo "BD_GIT_URL        = ${BD_GIT_URL}"
+
     printf "\nusage: ${BASH_SOURCE} <append|replace>\n\n"
 
     # sourcing via curl requires an exit
