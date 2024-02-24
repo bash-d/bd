@@ -8,14 +8,14 @@ bash directory (bash.d) autoloader
 
 ```
 curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace # this makes a backup, too
-curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | bash -s _ replace # this makes a backup, too
+curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | BD_INSTALL_BRANCH=0.45.0 bash -s _ replace
 ```
 
 ### automatically append to ~/.bash_profile and ~/.bashrc
 
 ```
 curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ append # this makes a backup, too
-curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | bash -s _ append # this makes a backup, too
+curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | BD_INSTALL_BRANCH=0.45.0 bash -s _ append
 ```
 
 ### manual installation
