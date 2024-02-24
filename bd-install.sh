@@ -165,6 +165,7 @@ if [ "${BD_INSTALL_EXISTS}" == "1" ]; then
 
     echo "# [OK] ... '${BD_GIT_URL}' pulled"
 else
+    echo git clone ${BD_GIT_URL} ${BD_DIR} && echo
     git clone ${BD_GIT_URL} ${BD_DIR} && echo
     if [ $? -ne 0 ]; then
         echo "# [ERROR] ... 'git clone ${BD_GIT_URL} ${BD_DIR}' failed"
