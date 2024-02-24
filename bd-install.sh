@@ -31,10 +31,10 @@
 # curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace
 # curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | bash -s _ replace
 
-BD_INSTALL_BRANCH="main"
-BD_INSTALL_BRANCH="0.45.0"
+export BD_INSTALL_BRANCH="main"
+export BD_INSTALL_BRANCH="0.45.0"
 
-export BD_GIT_URL=${BD_GIT_URL:-"https://github.com/bash-d/bd/tree/${BD_INSTALL_BRANCH}"}
+export BD_GIT_URL="https://github.com/bash-d/bd/"
 
 #
 # init
@@ -150,7 +150,7 @@ if [ "${BD_INSTALL_EXISTS}" == "1" ]; then
     BD_INSTALL_PWD="${PWD}"
     cd "${BD_DIR}"
 
-    git pull ${BD_DIR} &> /dev/null
+    git pull -b ${BD_INSTALL_BRANCH} ${BD_DIR} &> /dev/null
     if [ $? -ne 0 ]; then
         echo "# [ERROR] ... 'git pull ${BD_DIR}' failed" && cd "${BD_INSTALL_PWD}"
         if [ "${0}" == "bash" ] && [ "${BASH_SOURCE}" == "" ]; then
@@ -163,12 +163,12 @@ if [ "${BD_INSTALL_EXISTS}" == "1" ]; then
     cd "${BD_INSTALL_PWD}"
     unset -v BD_INSTALL_PWD
 
-    echo "# [OK] ... '${BD_GIT_URL}' pulled"
+    echo "# [OK] ... git pull -b ${BD_INSTALL_BRANCH} ${BD_DIR} '${BD_GIT_URL}' pulled"
 else
-    echo git clone ${BD_GIT_URL} ${BD_DIR} && echo
-    git clone ${BD_GIT_URL} ${BD_DIR} && echo
+    echo git clone -b ${BD_INSTALL_BRANCH} ${BD_GIT_URL} ${BD_DIR} && echo
+    git clone -b ${BD_INSTALL_BRANCH} ${BD_GIT_URL} ${BD_DIR} && echo
     if [ $? -ne 0 ]; then
-        echo "# [ERROR] ... 'git clone ${BD_GIT_URL} ${BD_DIR}' failed"
+        echo "# [ERROR] ... 'git clone -b ${BD_INSTALL_BRANCH} ${BD_GIT_URL} ${BD_DIR}' failed"
         if [ "${0}" == "bash" ] && [ "${BASH_SOURCE}" == "" ]; then
             exit 1
         else
@@ -176,7 +176,7 @@ else
         fi
     fi
 
-    echo "# [OK] ... '${BD_GIT_URL}' installed"
+    echo "# [OK] ... '-b ${BD_INSTALL_BRANCH} ${BD_GIT_URL}' installed"
 fi
 echo
 
