@@ -1,4 +1,4 @@
-# bd-option-upgrade.sh: upgrade bd (wip)
+# bd-upgrade.sh: upgrade bd (wip)
 
 # MIT License
 # ===========
@@ -40,7 +40,7 @@ fi
 #
 
 # upgrade option
-_bd_option_upgrade() {
+_bd_upgrade() {
     _bd_debug "${FUNCNAME}(${@})" 55
 
     [ ! -O "${BD_SOURCE}" ] && printf "\nrun 'bd ${1}' as the owner of ${BD_SOURCE} ...\n\n" && ls -l "${BD_SOURCE}" && echo && return 1

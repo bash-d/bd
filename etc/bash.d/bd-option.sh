@@ -39,7 +39,7 @@ fi
 # main
 #
 
-# info option
+# basic option
 _bd_option() {
     _bd_debug "${FUNCNAME} ${@}" 55
 
@@ -49,6 +49,10 @@ _bd_option() {
 
     if [[ "${1}" == "env"* ]]; then
         _bd_option_environment ${@}
+    fi
+
+    if [[ "${1}" == "vers"* ]]; then
+        echo "${BD_VERSION}"
     fi
 }
 

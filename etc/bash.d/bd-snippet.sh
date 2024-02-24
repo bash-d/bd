@@ -1,4 +1,4 @@
-# bd-option-install.sh: bd snippets (wip)
+# bd-install.sh: bd snippets (wip)
 
 # MIT License
 # ===========
@@ -40,7 +40,7 @@ fi
 #
 
 # snippet option
-_bd_option_snippet() {
+_bd_snippet() {
     _bd_debug "${FUNCNAME} ${@}" 1
 
     local bd_required_executable
@@ -68,32 +68,32 @@ _bd_option_snippet() {
 
     if [ "${2}" == "get" ]; then
         if [ "${3}" == '' ]; then
-            _bd_option_help
+            _bd_help
             return 1
         else
-            _bd_option_snippet_get ${@}
+            _bd_snippet_get ${@}
             return $?
         fi
     fi
 
     if [ "${2}" == "hash" ]; then
-        _bd_option_snippet_hash ${@}
+        _bd_snippet_hash ${@}
         return $?
     fi
 
     if [ "${2}" == "list" ] || [ "${2}" == "ls" ]; then
-        _bd_option_snippet_list ${@}
+        _bd_snippet_list ${@}
         return $?
     fi
 
     if [ "${2}" == "remove" ] || [ "${2}" == "rm" ]; then
-        _bd_option_snippet_remove ${@}
+        _bd_snippet_remove ${@}
         return $?
     fi
 }
 
 # snippet get
-_bd_option_snippet_get() {
+_bd_snippet_get() {
     _bd_debug "${FUNCNAME} ${@}" 1
 
     _bd_load_config preload
@@ -176,7 +176,7 @@ _bd_option_snippet_get() {
 }
 
 # snippet hash
-_bd_option_snippet_hash() {
+_bd_snippet_hash() {
     echo "${BD_SNIPPET_DIR}"
 
     echo
@@ -192,7 +192,7 @@ _bd_option_snippet_hash() {
 }
 
 # snippet list
-_bd_option_snippet_list() {
+_bd_snippet_list() {
     echo "${BD_SNIPPET_DIR}"
 
     echo
@@ -203,7 +203,7 @@ _bd_option_snippet_list() {
 }
 
 # snippet remove
-_bd_option_snippet_remove() {
+_bd_snippet_remove() {
     if [ "${3}" != "" ]; then
         if [ -f "${BD_SNIPPET_DIR}/${3}" ]; then
             if [ -w "${BD_SNIPPET_DIR}/${3}" ]; then

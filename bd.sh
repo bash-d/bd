@@ -184,8 +184,14 @@ _bd_bootstrap() {
     export BD_AUTOLOAD_SUB_DIR='etc/bash.d'
     export BD_CONFIG_FILE='.bd.conf'
     export BD_DEBUG=${BD_DEBUG:-0} # level >0 enables debugging
-    export BD_SNIPPET_DIR="${BD_SNIPPET_DIR:-${BD_DIR}/etc/bash.d/snippet}"
+    export BD_SNIPPET_DIR="${BD_SNIPPET_DIR:-${BD_DIR}/${BD_AUTOLOAD_SUB_DIR}/snippet}"
     export BD_SOURCE="$(_bd_realpath "${BASH_SOURCE}")"
+
+    _bd_debug "BD_SOURCE = ${BD_SOURCE} (${FUNCNAME})" 2
+
+    export BD_DIR="${BD_SOURCE%/*}"
+
+    _bd_debug "BD_DIR = ${BD_DIR} (${FUNCNAME})" 2
 }
 export -f _bd_bootstrap
 
@@ -318,21 +324,21 @@ export -f _bd_autoload_dir
 _bd_load_config() {
     local bd_load_config_dir_name
 
+    # ${BD_SNIPPET_DIR}
+    if [ ${#BD_SNIPPET_DIR} -gt 0 ]; then
+        if [ "${1}" != 'preload' ] && [ -d "${BD_SNIPPET_DIR}" ] && [ -r "${BD_SNIPPET_DIR}" ]; then
+            _bd_autoload_dir "${BD_SNIPPET_DIR}"
+        fi
+    fi
+
     # ${BD_DIR}
-    if [ ${#BD_AUTOLOAD_SUB_DIR} -gt 0 ] && [ ${#BD_DIR} -gt 0 ]; then
+    if [ ${#BD_DIR} -gt 0 ] && [ ${#BD_AUTOLOAD_SUB_DIR} -gt 0 ]; then
         [ -f "${BD_DIR}/${BD_CONFIG_FILE}" ] && [ -r "${BD_DIR}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${BD_DIR}/${BD_CONFIG_FILE}" ${1}
 
         if [ "${1}" != 'preload' ] && [ -d "${BD_DIR}/${BD_AUTOLOAD_SUB_DIR}" ] && [ -r "${BD_DIR}/${BD_AUTOLOAD_SUB_DIR}" ]; then
             _bd_autoload_dir "${BD_DIR}/${BD_AUTOLOAD_SUB_DIR}"
 
             _bd_load_config_dir "${BD_DIR}"
-        fi
-    fi
-
-    # ${BD_SNIPPET_DIR}
-    if [ ${#BD_SNIPPET_DIR} -gt 0 ]; then
-        if [ "${1}" != 'preload' ] && [ -d "${BD_SNIPPET_DIR}" ] && [ -r "${BD_SNIPPET_DIR}" ]; then
-            _bd_autoload_dir "${BD_SNIPPET_DIR}"
         fi
     fi
 
@@ -485,7 +491,7 @@ export -f _bd_load_config_file
 _bd_main() {
     _bd_debug "${FUNCNAME}(${@})" 55
 
-    _bd_debug "${BASH_SOURCE} main begin"
+    _bd_debug "${BASH_SOURCE} main begin" 25
 
     if [ ${#BD_DEBUG} -gt 0 ]; then
         # capture start time
@@ -516,16 +522,19 @@ _bd_main() {
             return 0
             ;;
         help|h|--help|-h)
-            _bd_option_help
+            _bd_help
             ;;
         license|--license)
-            _bd_option_license
+            _bd_license
             ;;
         snippet|s|--snippet|-s)
-            _bd_option_snippet ${@}
+            _bd_snippet ${@}
             ;;
         upgrade|--upgrade)
-            _bd_option_upgrade "${BD_DIR}"
+            _bd_upgrade "${BD_DIR}"
+            ;;
+        ver*|v|--ver*|-v)
+            _bd_option version
             ;;
         *)
             bd_main_option=0
@@ -539,7 +548,7 @@ _bd_main() {
     BD_RC=$?
 
     if [ ${BD_RC} -ne 0 ]; then
-        _bd_debug "${BD_SOURCE} ${1} fail; rc=${BD_RC}, bd_main_opton=${bd_main_option}" 10
+        _bd_debug "${BD_SOURCE} ${1} fail; rc=${BD_RC}, bd_main_option=${bd_main_option}" 10
 
         _bd_namespace_reset private
 
@@ -577,12 +586,6 @@ _bd_namespace_init() {
     # reset namespace; ensure (most of the) included bd- aliases, bd_ functions, & BD_ variables
     _bd_namespace_reset init
 
-    _bd_debug "BD_SOURCE = ${BD_SOURCE}" 2
-
-    export BD_DIR="${BD_SOURCE%/*}"
-
-    _bd_debug "BD_DIR = ${BD_DIR}" 2
-
     if [ ${#BD_DIR} -gt 0 ] && [ -d "${BD_DIR}" ] && type -P git &> /dev/null; then
         BD_GIT_URL="$(cd "${BD_DIR}" && git remote get-url $(git remote 2> /dev/null) 2> /dev/null)"
     fi
@@ -596,7 +599,7 @@ _bd_namespace_init() {
 
     _bd_os
 
-    # ensure BD_AUTOLOAD_DIRS, BD_AUTOLOAD_CONFIG_DIRS, BD_BASH_INIT_FILE, BD_HOME, BD_USER, & USER; (WIP)
+    # ensure BD_AUTOLOAD_DIRS, BD_AUTOLOAD_CONFIG_DIRS, BD_BASH_INIT_FILE, BD_HOME, BD_USER, & USER
 
     unset -v BD_AUTOLOAD_CONFIG_DIRS
 
@@ -667,8 +670,6 @@ _bd_namespace_reset() {
         # function names
         if [[ "${bd_declare}" == '_bd_'*' () ' ]]; then
             bd_function_name="${bd_declare%% *}"
-
-            #[[ "${bd_function_name}" == '_bd_option'* ]] && bd_function_names+=("${bd_function_name}")
         fi
 
         # variable names
@@ -704,9 +705,11 @@ _bd_namespace_reset() {
                 # exclude these, too
                 [ "${bd_variable_name}" == 'BD_BASH_INIT_FILE' ] && continue
                 [ "${bd_variable_name}" == 'BD_DEBUG' ] && continue
+                [ "${bd_variable_name}" == 'BD_DIR' ] && continue
                 [ "${bd_variable_name}" == 'BD_HOME' ] && continue
                 [ "${bd_variable_name}" == 'BD_LEARN' ] && continue
                 [ "${bd_variable_name}" == 'BD_SOURCE' ] && continue
+                [ "${bd_variable_name}" == 'BD_SNIPPET_DIR' ] && continue
                 [ "${bd_variable_name}" == 'BD_USER' ] && continue
                 [ "${bd_variable_name}" == 'BD_VERSION' ] && continue
 
@@ -776,7 +779,7 @@ _bd_os() {
     export BD_OS='unknown'
 
     if type -P uname &> /dev/null; then
-        BD_OS_KERNEL_NAME="$(uname -s 2> /dev/null)"
+        BD_OS_KERNEL_NAME="$(command -p uname -s 2> /dev/null)"
 
         if [ ${BASH_VERSINFO[0]} -ge 4 ]; then
             BD_OS_KERNEL_NAME=${BD_OS_KERNEL_NAME,,}
@@ -808,14 +811,11 @@ _bd_private() {
     local bd_private_variable_name bd_private_variable_names
 
     bd_private_variable_names=()
+
     bd_private_variable_names+=('BD_AUTOLOAD_SUB_DIR')
     bd_private_variable_names+=('BD_CONFIG_FILE')
     bd_private_variable_names+=('BD_DECLARE')
-    bd_private_variable_names+=('BD_DEBUG_PRIVATE')
     bd_private_variable_names+=('BD_OIFS')
-    bd_private_variable_names+=('BD_SNIPPET_FILE')
-    bd_private_variable_names+=('BD_VARIABLE_NAME')
-
 
     if [ "${1}" == 'echo' ]; then
         echo "${bd_private_variable_names[@]}"
@@ -900,10 +900,10 @@ _bd_uptime() {
 
         if [ "${BD_OS}" == 'darwin' ]; then
             # bsd & darwin; use sysctl
-            bd_uptime_t0="$(sysctl -n kern.boottime 2> /dev/null)"
+            bd_uptime_t0="$(command -p sysctl -n kern.boottime 2> /dev/null)"
             bd_uptime_t1="${bd_uptime_t0%,*}"
             bd_uptime_t1="${bd_uptime_t1##* }"
-            bd_uptime_ms=$((($(date +%s)-${bd_uptime_t1})*1000))
+            bd_uptime_ms=$((($(command -p date +%s)-${bd_uptime_t1})*1000))
         fi
     fi
 

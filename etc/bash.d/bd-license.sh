@@ -1,4 +1,4 @@
-# bd-option-license.sh: display license
+# bd-license.sh: display license
 
 # MIT License
 # ===========
@@ -40,7 +40,7 @@ fi
 #
 
 # license option
-_bd_option_license() {
+_bd_license() {
     _bd_debug "${FUNCNAME}(${@})" 55
 
     _bd_load_config preload

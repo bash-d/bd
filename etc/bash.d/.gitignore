@@ -4,9 +4,9 @@
 !bd-completion.sh
 !bd-deprecated.sh
 !bd-option.sh
-!bd-option-help.sh
-!bd-option-license.sh
-!bd-option-snippet.sh
-!bd-option-upgrade.sh
+!bd-help.sh
+!bd-license.sh
+!bd-snippet.sh
+!bd-upgrade.sh
 !bd-os.sh
 !bd-root.sh

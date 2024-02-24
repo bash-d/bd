@@ -1,4 +1,4 @@
-# bd-option-help.sh: display help for bd
+# bd-help.sh: display help for bd
 
 # MIT License
 # ===========
@@ -40,7 +40,7 @@ fi
 #
 
 # display help
-_bd_option_help() {
+_bd_help() {
     local bd_snippet_dir="${BD_SNIPPET_DIR:-${BD_DIR}/etc/bash.d/snippet}"
     local bd_help=''
     bd_help+="usage: bd [option]\n"
@@ -49,11 +49,11 @@ _bd_option_help() {
     bd_help+="\n"
     bd_help+="  ['' | *]                            - (default) invoke autoloader\n"
     bd_help+="\n"
-    bd_help+="  functions                           - export public _bd_ functions but do not invoke autoloader\n"
-    bd_help+="\n"
     bd_help+="  env [BD_* variable]                 - display BD_* environment variables & values, and optionally the value of a single variable\n"
     bd_help+="  dir [hash | ls]                     - display only BD_AUTOLOAD_DIRS array values, and optionally hash or list them\n"
+    bd_help+="\n"
     bd_help+="  license                             - display MIT license\n"
+    bd_help+="  version                             - display version\n"
     bd_help+="\n"
     bd_help+="  upgrade                             - upgrade bd; pull the latest version from "
     if [ ${#BD_GIT_URL} -gt 0 ]; then
@@ -67,6 +67,8 @@ _bd_option_help() {
     bd_help+="  snippet [hash | ls]                 - display all (.bash & .sh) files in ${bd_snippet_dir}\n"
     bd_help+="  snippet rm <name>                   - remove snippets named <name> from ${bd_snippet_dir}\n"
     #bd_help+="  snippet put <file>                  - get a file and put/upload it to <url>\n" # WIP
+    bd_help+="\n"
+    bd_help+="  functions                           - export public _bd_ functions but do not invoke autoloader\n"
     bd_help+="\n"
     bd_help+="  [help | h | --help | -h]            - this message\n"
 
