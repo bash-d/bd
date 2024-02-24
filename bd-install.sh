@@ -240,7 +240,7 @@ if [ "${BD_INSTALL_APPEND}" == "1" ]; then
 
     # append ~/.bashrc
     if [ -f ~/.bashrc ]; then
-        BD_INSTALL_APPEND_BASHRC="$(grep -E -e ' (.|source) (.*)/bd.sh( |$|")' ~/.bashrc) 2> /dev/null"
+	BD_INSTALL_APPEND_BASHRC="$(grep -E -e '(.|source) (.*)/bd.sh( |$|")' ~/.bashrc 2> /dev/null)"
         if [ ${#BD_INSTALL_APPEND_BASHRC} -gt 0 ]; then
             echo "# [OK] ... '~/.bashrc' sources 'bd.sh'"
         else

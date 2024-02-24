@@ -4,11 +4,11 @@ bash directory (bash.d) autoloader
 
 ## installing
 
-### automatically replace ~/.bash_profile and ~/.bashrc (what I do)
+### automatically backup & replace ~/.bash_profile and ~/.bashrc (most common)
 
 ```
-curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace # this makes a backup, too
-curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | BD_INSTALL_BRANCH=0.45.0 bash -s _ replace
+curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace && source ~/.bash_profile
+curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | BD_INSTALL_BRANCH=0.45.0 bash -s _ replace && source ~/.bash_profile
 ```
 
 ### automatically append to ~/.bash_profile and ~/.bashrc
