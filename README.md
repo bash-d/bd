@@ -8,15 +8,17 @@ bash directory (bash.d) autoloader
 
 ```
 curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace # this makes a backup, too
+curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | bash -s _ replace # this makes a backup, too
 ```
 
 ### automatically append to ~/.bash_profile and ~/.bashrc
 
 ```
 curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ append # this makes a backup, too
+curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | bash -s _ append # this makes a backup, too
 ```
 
-### manual
+### manual installation
 
 1) clone `bd` into your home directory
     ```sh

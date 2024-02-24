@@ -1,4 +1,4 @@
-# bd-option-info.sh: bd option logic
+# bd-sundry.sh: bd miscellaneous
 
 # MIT License
 # ===========
@@ -39,16 +39,16 @@ fi
 # main
 #
 
-# basic option
-_bd_option() {
+# sundry options
+_bd_sundry() {
     _bd_debug "${FUNCNAME} ${@}" 55
 
     if [[ "${1}" == "dir"* ]] || [ "${1}" == "autoload_dirs" ]; then
-        _bd_option_autoload_dirs ${@}
+        _bd_autoload_dirs ${@}
     fi
 
     if [[ "${1}" == "env"* ]]; then
-        _bd_option_environment ${@}
+        _bd_environment ${@}
     fi
 
     if [[ "${1}" == "vers"* ]]; then
@@ -57,7 +57,7 @@ _bd_option() {
 }
 
 # info BD_AUTOLOADER_DIRS array
-_bd_option_autoload_dirs() {
+_bd_autoload_dirs() {
     _bd_debug "${FUNCNAME}(${@})" 55
 
     if [ ${#2} -gt 0 ]; then
@@ -89,7 +89,7 @@ _bd_option_autoload_dirs() {
 }
 
 # env option
-_bd_option_environment() {
+_bd_environment() {
     _bd_debug "${FUNCNAME}(${@})" 55
 
     if [ ${#2} -gt 0 ]; then

@@ -512,10 +512,10 @@ _bd_main() {
 
     case "${1}" in
         dir*|d|--dir*|-d)
-            _bd_option ${@}
+            _bd_sundry ${@}
             ;;
         env*|e|--env|-e)
-            _bd_option ${@}
+            _bd_sundry ${@}
             ;;
         functions|--functions)
             # functions argument (don't do anything)
@@ -534,7 +534,7 @@ _bd_main() {
             _bd_upgrade "${BD_DIR}"
             ;;
         ver*|v|--ver*|-v)
-            _bd_option version
+            _bd_sundry version
             ;;
         *)
             bd_main_option=0
