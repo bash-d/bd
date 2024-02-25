@@ -2,8 +2,7 @@
 
 bash directory (bash.d) autoloader
 
-![](https://github.com/bash-d/bd/blob/0.45.0/example/bd-example.gif | width=100)
-![](example/bd-example.gif)
+![](example/bd-example.gif | width=100)
 
 ## installing
 
