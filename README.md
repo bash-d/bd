@@ -2,16 +2,16 @@
 
 bash directory (bash.d) autoloader
 
-<img src="example/bd-example.gif">
-
 ## installing
 
-### automatically backup & replace ~/.bash_profile and ~/.bashrc (most common)
+### automatically backup & replace ~/.bash_profile and ~/.bashrc
 
 ```
 # latest
 curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace && source ~/.bash_profile
+```
 
+```
 # a specific branch, i.e. 0.45.0
 curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | BD_INSTALL_BRANCH=0.45.0 bash -s _ replace && source ~/.bash_profile
 ```
@@ -21,9 +21,6 @@ curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | BD_I
 ```
 # latest
 curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ append # this makes a backup, too
-
-# a specific branch, i.e. 0.45.0
-curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | BD_INSTALL_BRANCH=0.45.0 bash -s _ append && source ~/.bash_profile
 ```
 
 ### manual installation
@@ -46,4 +43,5 @@ curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | BD_I
 
 ## why?
 
-`~/etc/bash.d` started as a idea to reduce the size of a .bash_profile and/or .bashrc, like an alternate or personal /etc/profile.d.  I think that concept makes it easier to use specific bits of shell in different environments.  For me, `bd` eventually brought some much needed organization to my personal shell and numerous build environments.
+<img src="example/bd-example.gif">
+
