@@ -7,7 +7,7 @@ bash directory (bash.d) autoloader
 ### automatically backup & replace ~/.bash_profile and ~/.bashrc
 
 ```
-# latest
+# main, latest
 curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace && source ~/.bash_profile
 ```
 
@@ -19,7 +19,6 @@ curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | BD_I
 ### automatically append to ~/.bash_profile and ~/.bashrc
 
 ```
-# latest
 curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ append # this makes a backup, too
 ```
 
