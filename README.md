@@ -2,7 +2,7 @@
 
 bash directory (bash.d) autoloader
 
-<img src="example/bd-example.gif" height="1080">
+<img src="example/bd-example.gif">
 
 ## installing
 
