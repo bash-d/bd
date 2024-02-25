@@ -41,7 +41,4 @@ curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -
 
 # notes
 
-## why?
-
 <img src="example/bd-example.gif">
-
