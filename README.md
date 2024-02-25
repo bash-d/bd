@@ -3,6 +3,9 @@
 bash directory (bash.d) autoloader
 
 ![](example/bd-example.gif | width=100)
+<img src="example/bd-example.gif" width="400" height="790">
+
+
 
 ## installing
 
