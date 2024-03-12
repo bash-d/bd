@@ -46,10 +46,12 @@ fi
 bd_ansi() {
     _bd_ansi ${@}
 }
+export -f bd_ansi
 
 # < 0.45.0
 bd_debug() {
     _bd_debug ${@}
 }
+export -f bd_debug
 
 export BD_DEPRECATED_SOURCED=1
