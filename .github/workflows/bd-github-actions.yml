@@ -1,0 +1,9 @@
+name: bd-github-actions
+run-name: run-name ${{ github.actor }} running
+on: [push]
+jobs:
+  check-bats-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash --version

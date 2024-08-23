@@ -1,0 +1,12 @@
+*
+!.gitignore
+!bd-ansi.sh
+!bd-completion.sh
+!bd-deprecated.sh
+!bd-help.sh
+!bd-license.sh
+!bd-snippet.sh
+!bd-sundry.sh
+!bd-upgrade.sh
+!bd-os.sh
+!bd-root.sh
