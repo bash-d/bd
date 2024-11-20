@@ -2,11 +2,11 @@
 
 This repository is dedicated to implementing a smarter, more adaptable solution for Bash profile management.
 
-Most Linux distributions build upon Bash's default startup behavior and utilize /etc/profile.d as a system-wide mechanism to autoload Bash environment profiles. In practice, this concept has significant value.
+Most Linux distributions build upon Bash's default startup behavior and utilize `/etc/profile.d` as a system-wide mechanism to autoload Bash environment profiles. In practice, this concept has significant value.
 
-In typical modern distros, the /etc/profile file contains a conditional logic chain that sources /etc/bashrc, which in turn includes all scripts from /etc/profile.d. Usually, these are the final lines of execution in both files.
+In typical modern distros, the /etc/profile file contains a conditional logic chain that sources `/etc/bashrc`, which in turn includes all scripts from `/etc/profile.d`. Usually, these are the final lines of execution in both files.
 
-Here we provide a solution that allows automatically sourcing a set of scripts after /etc/bashrc and everything in /etc/profile.d. Furthermore, this mechanism is flexible enough to autoload scripts from both $HOME/etc/bash.d and ${PWD}/etc/bash.d.
+Here we provide a solution that allows automatically sourcing a set of scripts after `/etc/bashrc` and everything in `/etc/profile.d`. Furthermore, this mechanism is flexible enough to autoload scripts from both `$HOME/etc/bash.d` and `${PWD}/etc/bash.d`.
 
 ## installing
 
@@ -46,7 +46,7 @@ cd && git clone https://github.com/bash-d/bd .bd
 
 ## notes
 
-### Objectives:
+### objectives:
 
 * Pure Bash (as much as possible)
 * No duplicate executions
