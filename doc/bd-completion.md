@@ -1,12 +1,12 @@
-## bd-completion.sh: Bash Completion for the bd Command
+# `bd-completion.sh`: Bash Completion for the `bd` Command
 
-The `bd-completion.sh` script is a auxiliary module for the `bd.sh` autoloader. It provides Bash completion capabilities for the bd command.
+The `bd-completion.sh` script is a auxiliary module for the `bd.sh` autoloader. It provides Bash completion capabilities for the `bd` command.
 
-### Purpose
+## Purpose
 
-This script enables intelligent tab-completion for the `bd` command and its subcommands in a Bash shell. It dynamically suggests options and arguments based on the current input context.
+This script significantly boosts the usability of the `bash-d` system by making it more intuitive and accessible through Bash tab-completion. It enables intelligent tab-completion for the `bd` command and its subcommands in a Bash shell. It dynamically suggests options and arguments based on the current input context.
 
-## Integration with bd.sh:
+## Integration with `bd.sh`
 
 * Relies on the presence of the `bd` environment and directory structure (e.g., BD_AUTOLOAD_DIR) for proper operation.
 * Complements other `bd` components by making their functionality more accessible and user-friendly.
@@ -19,7 +19,7 @@ This script enables intelligent tab-completion for the `bd` command and its subc
 
 ### Dynamic Completion Logic:
 
-* Implements `_bd_completion`, a function registered with Bash's complete command to handle tab-completion for the bd command.
+* Implements `_bd_completion`, a function registered with Bash's complete command to handle tab-completion for the `bd` command.
 * Identifies the current word being typed (`COMP_WORDS[COMP_CWORD]`) and provides suggestions based on context.
 
 ### Subcommand and Argument Suggestions:

@@ -1,12 +1,12 @@
-## bd-ansi.sh: ANSI Color and Formatting for Enhanced Terminal Output
+# `bd-ansi.sh`: ANSI Color and Formatting for Enhanced Terminal Output
 
 The `bd-ansi.sh` script is a complementary module for the `bd.sh` autoloader. It specializes in providing ANSI color and formatting utilities to enhance terminal output.
 
-### Purpose
+## Purpose
 
-This script offers functions to generate ANSI escape codes for controlling text formatting, foreground/background colors, and styles in the terminal. It allows for rich, colorized output and improved debugging displays.
+This script is a powerful utility for any terminal-based application or script, offering robust tools for creating visually enriched terminal outputs. It offers functions to generate ANSI escape codes for controlling text formatting, foreground/background colors, and styles in the terminal. It allows for rich, colorized output and improved debugging displays.
 
-## Integration with bd.sh
+## Integration with `bd.sh`
 
 * The script is loaded dynamically by `bd.sh` when required, particularly to provide enhanced colorized debug messages (`_bd_debug`).
 * The `_bd_ansi` function can be called directly or indirectly within other utility scripts or debugging functions.
