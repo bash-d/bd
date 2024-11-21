@@ -18,16 +18,5 @@ curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -
 
 [MIT License](https://github.com/bash-d/bd/blob/main/LICENSE.md)
 
-## Notes
-
-### Objectives:
-
-* Pure Bash (as much as possible)
-* No duplicate executions
-* No recursion loops; definite, predictable order of execution
-* Don't break /etc/profile.d, override if needed
-* Don't rely on /etc or root access
-* Work with /etc/profile.d, /etc/bash.d, ~/etc/bash.d, and $PWD/etc/bash.d
-
 ### An Example
 <img src="example/bd-example.gif?raw=true">
