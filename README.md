@@ -12,7 +12,7 @@ curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -
 ### Install: A Specific Release (replace)
 
 ```
-# a specific branch, i.e. 0.45.1
+# a specific release, i.e. 0.45.1
 curl -Ls https://raw.githubusercontent.com/bash-d/bd/refs/tags/v0.45.1/bd-install.sh | BD_INSTALL_RELEASE=0.45.1 bash -s _ replace
 ```
 
