@@ -1,4 +1,4 @@
-# bd-install.sh: bash-d/bd installer
+# bd-install.sh: bash-d installer
 
 # MIT License
 # ===========
@@ -29,15 +29,17 @@
 #
 # curl -Ls file:///${BD_DIR}/bd-install.sh | bash -s _ replace
 # curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace
-# curl -Ls https://raw.githubusercontent.com/bash-d/bd/0.45.0/bd-install.sh | BD_INSTALL_BRANCH=0.45.0 bash -s _ replace
-
-export BD_INSTALL_BRANCH=${BD_INSTALL_BRANCH:-'main'}
-
-export BD_GIT_URL="https://github.com/bash-d/bd/"
+# curl -Ls https://raw.githubusercontent.com/bash-d/bd/refs/tags/v0.45.1/bd-install.sh | BD_INSTALL_RELEASE=0.45.1 bash -s _ replace
 
 #
 # init
 #
+
+[ "${BASH_VERSION}" == "" ] && echo "bash is required" && exit 1
+
+export BD_INSTALL_RELEASE=${BD_INSTALL_RELEASE:-'main'}
+
+export BD_GIT_URL="https://github.com/bash-d/bd/"
 
 # prevent execution
 if [ "${0}" == "${BASH_SOURCE}" ]; then
@@ -164,10 +166,10 @@ if [ "${BD_INSTALL_EXISTS}" == "1" ]; then
 
     echo "# [OK] ... 'git pull ${BD_DIR} ' pulled"
 else
-    echo "# [OK] git clone -b ${BD_INSTALL_BRANCH} ${BD_GIT_URL} ${BD_DIR}" && echo
-    git clone -b ${BD_INSTALL_BRANCH} ${BD_GIT_URL} ${BD_DIR} && echo
+    echo "# [OK] git clone --depth 1 --branch ${BD_INSTALL_RELEASE} ${BD_GIT_URL} ${BD_DIR}" && echo
+    git clone --depth 1 --branch ${BD_INSTALL_RELEASE} ${BD_GIT_URL} ${BD_DIR} && echo
     if [ $? -ne 0 ]; then
-        echo "# [ERROR] ... 'git clone -b ${BD_INSTALL_BRANCH} ${BD_GIT_URL} ${BD_DIR}' failed"
+        echo "# [ERROR] ... 'git clone --depth 1 --branch ${BD_INSTALL_RELEASE} ${BD_GIT_URL} ${BD_DIR}' failed"
         if [ "${0}" == "bash" ] && [ "${BASH_SOURCE}" == "" ]; then
             exit 1
         else
@@ -175,7 +177,7 @@ else
         fi
     fi
 
-    echo "# [OK] ... '${BD_GIT_URL}tree/${BD_INSTALL_BRANCH}' installed"
+    echo "# [OK] ... '${BD_GIT_URL}tree/${BD_INSTALL_RELEASE}' installed"
 fi
 echo
 
