@@ -1,4 +1,4 @@
-# `bd-ansi.sh`: ANSI Color and Formatting for Enhanced Terminal Output
+# `bd-ansi.sh`: ANSI Formatting for Enhanced Terminal Output
 
 The `bd-ansi.sh` script is a complementary module for the `bd.sh` autoloader. It specializes in providing ANSI color and formatting utilities to enhance terminal output.
 
