@@ -1,3 +1,6 @@
+# 0.45.1
+- all: renamed 'snippets' to 'bits'
+
 # 0.45.0
 - all: all functions are now prefixed with _bd_ except bd()
 - all: embed MIT license text

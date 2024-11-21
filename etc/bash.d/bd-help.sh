@@ -41,7 +41,7 @@ fi
 
 # display help
 _bd_help() {
-    local bd_snippet_dir="${BD_SNIPPET_DIR:-${BD_DIR}/etc/bash.d/snippet}"
+    local bd_bits_dir="${BD_BITS_DIR:-${BD_DIR}/etc/bash.d/bits}"
     local bd_help=''
     bd_help+="usage: bd [option]\n"
     bd_help+="\n"
@@ -63,10 +63,10 @@ _bd_help() {
     fi
     bd_help+="\n"
     bd_help+="\n"
-    bd_help+="  snippet get <url> [name]            - get a file from an <url> and put it in ${bd_snippet_dir}/[name]\n"
-    bd_help+="  snippet [hash | ls]                 - display all (.bash & .sh) files in ${bd_snippet_dir}\n"
-    bd_help+="  snippet rm <name>                   - remove snippets named <name> from ${bd_snippet_dir}\n"
-    #bd_help+="  snippet put <file>                  - get a file and put/upload it to <url>\n" # WIP
+    bd_help+="  bits get <url> [name]               - get a file from an <url> and put it in ${bd_bits_dir}/[name]\n"
+    bd_help+="  bits [hash | ls]                    - display all (.bash & .sh) files in ${bd_bits_dir}\n"
+    bd_help+="  bits rm <name>                      - remove bits named <name> from ${bd_bits_dir}\n"
+    #bd_help+="  bits put <file>                     - get a file and put/upload it to <url>\n" # WIP
     bd_help+="\n"
     bd_help+="  functions                           - export public _bd_ functions but do not invoke autoloader\n"
     bd_help+="\n"

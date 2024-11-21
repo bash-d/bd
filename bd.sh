@@ -42,7 +42,7 @@ if [ "${BASH_SOURCE}" == '' ]; then
     return 1 &> /dev/null
 fi
 
-export BD_VERSION=0.45.0
+export BD_VERSION=0.45.1
 
 #
 # functions
@@ -184,7 +184,7 @@ _bd_bootstrap() {
     export BD_AUTOLOAD_SUB_DIR='etc/bash.d'
     export BD_CONFIG_FILE='.bd.conf'
     export BD_DEBUG=${BD_DEBUG:-0} # level >0 enables debugging
-    export BD_SNIPPET_DIR="${BD_SNIPPET_DIR:-${BD_DIR}/${BD_AUTOLOAD_SUB_DIR}/snippet}"
+    export BD_BITS_DIR="${BD_BITS_DIR:-${BD_DIR}/${BD_AUTOLOAD_SUB_DIR}/bits}"
     export BD_SOURCE="$(_bd_realpath "${BASH_SOURCE}")"
 
     _bd_debug "BD_SOURCE = ${BD_SOURCE} (${FUNCNAME})" 2
@@ -324,10 +324,10 @@ export -f _bd_autoload_dir
 _bd_load_config() {
     local bd_load_config_dir_name
 
-    # ${BD_SNIPPET_DIR}
-    if [ ${#BD_SNIPPET_DIR} -gt 0 ]; then
-        if [ "${1}" != 'preload' ] && [ -d "${BD_SNIPPET_DIR}" ] && [ -r "${BD_SNIPPET_DIR}" ]; then
-            _bd_autoload_dir "${BD_SNIPPET_DIR}"
+    # ${BD_BITS_DIR}
+    if [ ${#BD_BITS_DIR} -gt 0 ]; then
+        if [ "${1}" != 'preload' ] && [ -d "${BD_BITS_DIR}" ] && [ -r "${BD_BITS_DIR}" ]; then
+            _bd_autoload_dir "${BD_BITS_DIR}"
         fi
     fi
 
@@ -511,6 +511,9 @@ _bd_main() {
     local bd_main_option=1
 
     case "${1}" in
+        bits|b|--bits|-b)
+            _bd_bits ${@}
+            ;;
         dir*|d|--dir*|-d)
             _bd_sundry ${@}
             ;;
@@ -526,9 +529,6 @@ _bd_main() {
             ;;
         license|--license)
             _bd_license
-            ;;
-        snippet|s|--snippet|-s)
-            _bd_snippet ${@}
             ;;
         upgrade|--upgrade)
             _bd_upgrade "${BD_DIR}"
@@ -709,7 +709,7 @@ _bd_namespace_reset() {
                 [ "${bd_variable_name}" == 'BD_HOME' ] && continue
                 [ "${bd_variable_name}" == 'BD_LEARN' ] && continue
                 [ "${bd_variable_name}" == 'BD_SOURCE' ] && continue
-                [ "${bd_variable_name}" == 'BD_SNIPPET_DIR' ] && continue
+                [ "${bd_variable_name}" == 'BD_BITS_DIR' ] && continue
                 [ "${bd_variable_name}" == 'BD_USER' ] && continue
                 [ "${bd_variable_name}" == 'BD_VERSION' ] && continue
 

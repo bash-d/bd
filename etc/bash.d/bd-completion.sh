@@ -46,7 +46,7 @@ _bd_completion() {
         local _bd_completion_words
         local _bd_completion_word # cur
 
-        _bd_completion_words="dir env functions help license snippet upgrade"
+        _bd_completion_words="bits dir env functions help license upgrade"
 
         _bd_completion_word="${COMP_WORDS[COMP_CWORD]}"
 
@@ -59,6 +59,21 @@ _bd_completion() {
         fi
 
         case "${_bd_completion_option}" in
+            bits|b|--bits|-b)
+                #echo _bd_completion_option=$_bd_completion_option _bd_completion_action=$_bd_completion_action, _bd_completion_word=$_bd_completion_word, 3=${COMP_WORDS[3]}
+
+                if [ "${_bd_completion_action}" == "" ]; then
+                    _bd_completion_words="get hash ls rm"
+                    COMPREPLY=($( compgen -W "${_bd_completion_words}" -- ${_bd_completion_word} ))
+                    return
+                fi
+
+                if [ "${COMP_WORDS[3]}" == "" ] && [ "${_bd_completion_action}" == "rm" ]; then
+                    BD_BITS_DIR="${BD_BITS_DIR:-${BD_DIR}/etc/bash.d/bits}"
+                    COMPREPLY=($(compgen -W "$(command ls ${BD_BITS_DIR})" -- "${_bd_completion_word}"))
+                    return
+                fi
+                ;;
             dir*|d|--dir*|-d)
                 if [ "${_bd_completion_action}" == "" ]; then
                     _bd_completion_words="hash ls"
@@ -78,21 +93,6 @@ _bd_completion() {
             help|h|--help|-h)
                 ;;
             license|--license)
-                ;;
-            snippet|s|--snippet|-s)
-                #echo _bd_completion_option=$_bd_completion_option _bd_completion_action=$_bd_completion_action, _bd_completion_word=$_bd_completion_word, 3=${COMP_WORDS[3]}
-
-                if [ "${_bd_completion_action}" == "" ]; then
-                    _bd_completion_words="get hash ls rm"
-                    COMPREPLY=($( compgen -W "${_bd_completion_words}" -- ${_bd_completion_word} ))
-                    return
-                fi
-
-                if [ "${COMP_WORDS[3]}" == "" ] && [ "${_bd_completion_action}" == "rm" ]; then
-                    BD_SNIPPET_DIR="${BD_SNIPPET_DIR:-${BD_DIR}/etc/bash.d/snippet}"
-                    COMPREPLY=($(compgen -W "$(command ls ${BD_SNIPPET_DIR})" -- "${_bd_completion_word}"))
-                    return
-                fi
                 ;;
             "")
                 COMPREPLY=($( compgen -W "${_bd_completion_words}" -- ${_bd_completion_word} ))

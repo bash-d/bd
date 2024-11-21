@@ -1,4 +1,4 @@
-# bd-install.sh: bd snippets (wip)
+# bd-install.sh: bd bits (wip)
 
 # MIT License
 # ===========
@@ -37,10 +37,10 @@ fi
 
 #
 # main
-#
 
-# snippet option
-_bd_snippet() {
+
+# bits option
+_bd_bits() {
     _bd_debug "${FUNCNAME} ${@}" 1
 
     local bd_required_executable
@@ -53,15 +53,15 @@ _bd_snippet() {
         fi
     done
 
-    if [ -a "${BD_SNIPPET_DIR}" ] && [ ! -d "${BD_SNIPPET_DIR}" ]; then
-        echo "\"${BD_SNIPPET_DIR}\" is not a directory"
+    if [ -a "${BD_BITS_DIR}" ] && [ ! -d "${BD_BITS_DIR}" ]; then
+        echo "\"${BD_BITS_DIR}\" is not a directory"
         return 1
     fi
 
-    if [ ! -d "${BD_SNIPPET_DIR}" ]; then
-        mkdir -p "${BD_SNIPPET_DIR}"
+    if [ ! -d "${BD_BITS_DIR}" ]; then
+        mkdir -p "${BD_BITS_DIR}"
         if [ $? -ne 0 ]; then
-            echo "failed to 'mkdir \"${BD_SNIPPET_DIR}\"'"
+            echo "failed to 'mkdir \"${BD_BITS_DIR}\"'"
             return 1
         fi
     fi
@@ -71,72 +71,72 @@ _bd_snippet() {
             _bd_help
             return 1
         else
-            _bd_snippet_get ${@}
+            _bd_bits_get ${@}
             return $?
         fi
     fi
 
     if [ "${2}" == "hash" ]; then
-        _bd_snippet_hash ${@}
+        _bd_bits_hash ${@}
         return $?
     fi
 
-    if [ "${2}" == "list" ] || [ "${2}" == "ls" ]; then
-        _bd_snippet_list ${@}
+    if [ "${2}" == "" ] || [ "${2}" == "list" ] || [ "${2}" == "ls" ]; then
+        _bd_bits_list ${@}
         return $?
     fi
 
     if [ "${2}" == "remove" ] || [ "${2}" == "rm" ]; then
-        _bd_snippet_remove ${@}
+        _bd_bits_remove ${@}
         return $?
     fi
 }
 
-# snippet get
-_bd_snippet_get() {
+# bits get
+_bd_bits_get() {
     _bd_debug "${FUNCNAME} ${@}" 1
 
     _bd_load_config preload
 
-    local bd_snippet_get_from="${3}"
-    local bd_snippet_get_to="${4}"
+    local bd_bits_get_from="${3}"
+    local bd_bits_get_to="${4}"
 
 
     #bd_realpath_dirname="${bd_realpath_arg%/*}"
 
-    local bd_snippet_get_basename="${bd_snippet_get_from##*/}"
-    bd_snippet_get_basename="${bd_snippet_get_basename%\?*}" # no url parameters, e.g. github private links
-    bd_snippet_get_basename="${bd_snippet_get_basename%\&*}" # no url parameters, e.g. github private links
+    local bd_bits_get_basename="${bd_bits_get_from##*/}"
+    bd_bits_get_basename="${bd_bits_get_basename%\?*}" # no url parameters, e.g. github private links
+    bd_bits_get_basename="${bd_bits_get_basename%\&*}" # no url parameters, e.g. github private links
 
-    if [ -z "${bd_snippet_get_to}" ]; then
-        bd_snippet_get_to="${bd_snippet_get_basename:(-3)}"
-        if [ "${bd_snippet_get_to}" == ".sh" ]; then
-            bd_snippet_get_to="${bd_snippet_get_basename}"
+    if [ -z "${bd_bits_get_to}" ]; then
+        bd_bits_get_to="${bd_bits_get_basename:(-3)}"
+        if [ "${bd_bits_get_to}" == ".sh" ]; then
+            bd_bits_get_to="${bd_bits_get_basename}"
         else
-            bd_snippet_get_to="${bd_snippet_get_basename:(-5)}"
-            if [ "${bd_snippet_get_to}" == ".bash" ]; then
-                bd_snippet_get_to="${bd_snippet_get_basename}"
+            bd_bits_get_to="${bd_bits_get_basename:(-5)}"
+            if [ "${bd_bits_get_to}" == ".bash" ]; then
+                bd_bits_get_to="${bd_bits_get_basename}"
             else
-                bd_snippet_get_to="${bd_snippet_get_basename}.sh"
+                bd_bits_get_to="${bd_bits_get_basename}.sh"
             fi
         fi
     fi
 
-    local bd_snippet_get_install_file="${BD_SNIPPET_DIR}/${bd_snippet_get_to}"
+    local bd_bits_get_install_file="${BD_BITS_DIR}/${bd_bits_get_to}"
 
     # replace it or quit
-    if [ -a "${bd_snippet_get_install_file}" ]; then
-        echo -n "replace \"${bd_snippet_get_install_file}\" (y/n) ? "
+    if [ -a "${bd_bits_get_install_file}" ]; then
+        echo -n "replace \"${bd_bits_get_install_file}\" (y/n) ? "
         read BD_YN
         if [ "${BD_YN:0:1}" != "y" ] && [ "${BD_YN:0:1}" != "Y" ]; then
             return 0
         else
             echo
-            echo "replacing \"${bd_snippet_get_install_file}\" ..."
+            echo "replacing \"${bd_bits_get_install_file}\" ..."
             echo
-            command -p rm "${bd_snippet_get_install_file}"
+            command -p rm "${bd_bits_get_install_file}"
             if [ $? -ne 0 ]; then
-                echo "failed to 'command -p rm \"${bd_snippet_get_install_file}\"'"
+                echo "failed to 'command -p rm \"${bd_bits_get_install_file}\"'"
                 return 1
             fi
         fi
@@ -145,43 +145,43 @@ _bd_snippet_get() {
     BD_CURL_ARGS="--silent"
 
     # get it
-    echo curl ${BD_CURL_ARGS} ${bd_snippet_get_from} -o ${bd_snippet_get_install_file}
-    command -p curl ${BD_CURL_ARGS} ${bd_snippet_get_from} -o ${bd_snippet_get_install_file}
+    echo curl ${BD_CURL_ARGS} ${bd_bits_get_from} -o ${bd_bits_get_install_file}
+    command -p curl ${BD_CURL_ARGS} ${bd_bits_get_from} -o ${bd_bits_get_install_file}
     if [ $? -ne 0 ]; then
-        echo "failed to 'curl ${BD_CURL_ARGS} ${bd_snippet_get_from} -o ${bd_snippet_get_install_file}'"
+        echo "failed to 'curl ${BD_CURL_ARGS} ${bd_bits_get_from} -o ${bd_bits_get_install_file}'"
         return 1
     fi
 
     echo
     echo "--cut--"
-    command -p cat ${bd_snippet_get_install_file}
+    command -p cat ${bd_bits_get_install_file}
     echo "--cut--"
     echo
 
-    echo -n "source \"${bd_snippet_get_install_file}\" (y/n) ? "
+    echo -n "source \"${bd_bits_get_install_file}\" (y/n) ? "
     read BD_YN
     if [ "${BD_YN:0:1}" != "y" ] && [ "${BD_YN:0:1}" != "Y" ]; then
         echo
-        echo "removing \"${bd_snippet_get_install_file}\""
+        echo "removing \"${bd_bits_get_install_file}\""
         echo
-        command -p rm "${bd_snippet_get_install_file}"
+        command -p rm "${bd_bits_get_install_file}"
         if [ $? -ne 0 ]; then
-            echo "failed to 'command -p rm \"${bd_snippet_get_install_file}\"'"
+            echo "failed to 'command -p rm \"${bd_bits_get_install_file}\"'"
         fi
         return 1
     else
         echo
-        echo "installed \"${bd_snippet_get_install_file}\""
+        echo "installed \"${bd_bits_get_install_file}\""
     fi
 }
 
-# snippet hash
-_bd_snippet_hash() {
-    echo "${BD_SNIPPET_DIR}"
+# bits hash
+_bd_bits_hash() {
+    echo "${BD_BITS_DIR}"
 
     echo
     local bd_autoload_dir bd_autoload_file
-    for bd_autoload_file in "${BD_SNIPPET_DIR}"/*.{bash,sh}; do
+    for bd_autoload_file in "${BD_BITS_DIR}"/*.{bash,sh}; do
         if [ -r "${bd_autoload_file}" ]; then
             command md5sum "${bd_autoload_file}"
         fi
@@ -191,35 +191,35 @@ _bd_snippet_hash() {
     return 0
 }
 
-# snippet list
-_bd_snippet_list() {
-    echo "${BD_SNIPPET_DIR}"
+# bits list
+_bd_bits_list() {
+    echo "${BD_BITS_DIR}"
 
     echo
-    command ls -l "${BD_SNIPPET_DIR}"
+    command ls -l "${BD_BITS_DIR}"
     echo
 
     return 0
 }
 
-# snippet remove
-_bd_snippet_remove() {
+# bits remove
+_bd_bits_remove() {
     if [ "${3}" != "" ]; then
-        if [ -f "${BD_SNIPPET_DIR}/${3}" ]; then
-            if [ -w "${BD_SNIPPET_DIR}/${3}" ]; then
-                command rm -i "${BD_SNIPPET_DIR}/${3}"
+        if [ -f "${BD_BITS_DIR}/${3}" ]; then
+            if [ -w "${BD_BITS_DIR}/${3}" ]; then
+                command rm -i "${BD_BITS_DIR}/${3}"
                 return $?
             else
-                if [ -r "${BD_SNIPPET_DIR}/${3}" ]; then
-                    echo "'${BD_SNIPPET_DIR}/${3}' file found readable (but not writable)"
+                if [ -r "${BD_BITS_DIR}/${3}" ]; then
+                    echo "'${BD_BITS_DIR}/${3}' file found readable (but not writable)"
                     return 1
                 else
-                    echo "'${BD_SNIPPET_DIR}/${3}' file not found readable"
+                    echo "'${BD_BITS_DIR}/${3}' file not found readable"
                     return 1
                 fi
             fi
         else
-            echo "'${BD_SNIPPET_DIR}/${3}' file not found"
+            echo "'${BD_BITS_DIR}/${3}' file not found"
             return 1
         fi
     fi

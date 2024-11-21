@@ -27,28 +27,28 @@ This script significantly boosts the usability of the `bash-d` system by making 
 * Provides completions for the following primary subcommands:
 	* `dir`: Suggests actions like `hash` and `ls` for directory-related operations.
 	* `env`: Dynamically lists available environment variables (via `bd env`).
-	* `snippet`: Suggests snippet actions like `get`, `hash`, `ls`, and `rm`.
-		* For `rm`, lists available snippets in the designated `BD_SNIPPET_DIR`.
+	* `bits`: Suggests bits actions like `get`, `hash`, `ls`, and `rm`.
+		* For `rm`, lists available bits in the designated `BD_BITS_DIR`.
 * Handles general subcommands, including help, license, upgrade, and functions.
 
 ### Fallback and Default Behavior:
 
-* If no specific subcommand or argument is matched, the script falls back to providing a list of general `bd` subcommands: `dir`, `env`, `functions`, `help`, `license`, `snippet`, and `upgrade`.
+* If no specific subcommand or argument is matched, the script falls back to providing a list of general `bd` subcommands: `dir`, `env`, `functions`, `help`, `license`, `bits`, and `upgrade`.
 * Gracefully returns no suggestions for invalid or unrecognized inputs.
 
 ## How It Works
 
 * The script uses `compgen` to generate potential completions based on predefined lists or dynamically retrieved data.
-* Subcommands like `env` and `snippet` fetch their arguments on-the-fly, ensuring the completion suggestions reflect the current state of the environment.
+* Subcommands like `env` and `bits` fetch their arguments on-the-fly, ensuring the completion suggestions reflect the current state of the environment.
 
 ## Use Cases
 
 * Interactive Shell Users: Enhances productivity by reducing the need to remember exact subcommands and options for `bd`.
 * Developers: Simplifies testing and exploration of `bd` functionality during development.
-* System Administrators: Provides quick access to `bd`'s capabilities, such as managing snippets or environment variables.
+* System Administrators: Provides quick access to `bd`'s capabilities, such as managing bits or environment variables.
 
 ## Notable Strengths
 
 * Context-aware suggestions ensure relevance to the user's current input.
-* Dynamic fetching of data (e.g., environment variables, snippets) enhances accuracy and usability.
+* Dynamic fetching of data (e.g., environment variables, bits) enhances accuracy and usability.
 * Clean integration with Bash's native completion system using `complete -F`.
