@@ -172,6 +172,8 @@ _bd_bits_get() {
     else
         echo
         echo "installed \"${bd_bits_get_install_file}\""
+        echo . "${bd_bits_get_install_file}"
+        . "${bd_bits_get_install_file}"
     fi
 }
 
