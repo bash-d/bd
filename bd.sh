@@ -225,11 +225,12 @@ export -f _bd_autoloader_execute_array
 _bd_bootstrap() {
     _bd_caller || return 1
 
-    export BD_SUB_DIR='etc/bash.d'
     export BD_CONFIG_FILE='.bd.conf'
     export BD_DEBUG=${BD_DEBUG:-0} # level >0 enables debugging
-    export BD_BITS_DIR="${BD_BITS_DIR:-${BD_DIR}/${BD_SUB_DIR}/bits}"
     export BD_SOURCE="$(_bd_realpath "${BASH_SOURCE}")"
+
+    export BD_SUB_DIR="${BD_SUB_DIR:-etc/bash.d}"
+    export BD_BITS_DIR="${BD_BITS_DIR:-${BD_DIR}/${BD_SUB_DIR}/bits}"
 
     _bd_debug "BD_SOURCE = ${BD_SOURCE} (${FUNCNAME})" 2
 
