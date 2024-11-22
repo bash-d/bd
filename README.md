@@ -1,10 +1,12 @@
-# An Advanced Directory Autoloader for Bash
+# Autoloader for Bash
+
+[Overview](https://github.com/bash-d/bd/tree/main/doc)
 
 ### Automatic Installation (backup & replace existing .bash_profile/.bashrc)
 
 ```sh
 # main, latest
-curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace && source ~/.bash_profile
+cd; curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | /usr/bin/env bash -s _ replace; . .bash_profile; bd env
 ```
 
 ### Manual Installation
@@ -18,5 +20,5 @@ curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -
 
 [MIT License](https://github.com/bash-d/bd/blob/main/LICENSE.md)
 
-### An Example
+## An Example
 <img src="example/bd-example.gif?raw=true">

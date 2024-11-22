@@ -27,9 +27,9 @@
 
 # usage examples
 #
-# curl -Ls file:///${BD_DIR}/bd-install.sh | bash -s _ replace
-# curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace
-# curl -Ls https://raw.githubusercontent.com/bash-d/bd/refs/tags/v0.45.1/bd-install.sh | BD_INSTALL_RELEASE=0.45.1 bash -s _ replace
+# cd; curl -Ls file:///${BD_DIR}/bd-install.sh | /usr/bin/env bash -s _ replace; . .bash_profile; bd env
+# cd; curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | /usr/bin/env bash -s _ replace; . .bash_profile; bd env
+# cd; curl -Ls https://raw.githubusercontent.com/bash-d/bd/refs/tags/v0.45.1/bd-install.sh | BD_INSTALL_RELEASE=v0.45.1 /usr/bin/env bash -s _ replace; . .bash_profile; bd env
 
 #
 # init
