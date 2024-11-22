@@ -9,7 +9,7 @@ curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -
 
 ### Manual Installation
 
-* Download a release, or clone the repo, and add something like it to the end of your `.bash_profile` and/or `.bashrc` ...
+* Download a release, or clone the repo, and add something like it to the end of your profile ...
 ```sh
 [ -r ~/.bd/bd.sh ] && source ~/.bd/bd.sh ${@}
 ```
