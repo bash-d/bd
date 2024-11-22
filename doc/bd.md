@@ -55,7 +55,7 @@ The Bash script, `bd.sh`, implements a sophisticated directory autoloader for ma
 
 ### Bootstrap and Initialization
 
-* Sets up essential environment variables, including `BD_AUTOLOAD_DIRS`, `BD_HOME`, and `BD_USER`.
+* Sets up essential environment variables, including `BD_AUTOLOADER_DIRS`, `BD_HOME`, and `BD_USER`.
 * Detects and initializes the appropriate directories and configurations based on the current shell environment.
 
 ### Error Handling and Safety

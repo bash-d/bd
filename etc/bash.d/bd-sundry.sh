@@ -63,7 +63,7 @@ _bd_autoload_dirs() {
     if [ ${#2} -gt 0 ]; then
         if [ "${2}" == 'hash' ] || [ "${2}" == 'ls' ]; then
             local bd_autoload_dir bd_autoload_file
-            for bd_autoload_dir in "${BD_AUTOLOAD_DIRS[@]}"; do
+            for bd_autoload_dir in "${BD_AUTOLOADER_DIRS[@]}"; do
                 if [ -d "${bd_autoload_dir}" ]; then
                     echo "# ${bd_autoload_dir}"
                     echo
@@ -85,7 +85,7 @@ _bd_autoload_dirs() {
         fi
     fi
 
-    echo "${BD_AUTOLOAD_DIRS[@]}"
+    echo "${BD_AUTOLOADER_DIRS[@]}"
 }
 
 # env option
@@ -114,8 +114,8 @@ _bd_environment() {
 
             printf "%-30s" "${bd_variable_name}"
             printf " = "
-            if [ "${bd_variable_name}" == 'BD_AUTOLOAD_DIRS' ]; then
-                echo "${BD_AUTOLOAD_DIRS[@]}"
+            if [ "${bd_variable_name}" == 'BD_AUTOLOADER_DIRS' ]; then
+                echo "${BD_AUTOLOADER_DIRS[@]}"
             else
                 echo "${!bd_variable_name}"
             fi

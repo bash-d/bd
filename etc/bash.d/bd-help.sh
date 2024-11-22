@@ -50,7 +50,7 @@ _bd_help() {
     bd_help+="  ['' | *]                            - (default) invoke autoloader\n"
     bd_help+="\n"
     bd_help+="  env [BD_* variable]                 - display BD_* environment variables & values, and optionally the value of a single variable\n"
-    bd_help+="  dir [hash | ls]                     - display only BD_AUTOLOAD_DIRS array values, and optionally hash or list them\n"
+    bd_help+="  dir [hash | ls]                     - display only BD_AUTOLOADER_DIRS array values, and optionally hash or list them\n"
     bd_help+="\n"
     bd_help+="  license                             - display MIT license\n"
     bd_help+="  version                             - display version\n"
