@@ -43,8 +43,8 @@ fi
 _bd_sundry() {
     _bd_debug "${FUNCNAME} ${@}" 55
 
-    if [[ "${1}" == "dir"* ]] || [ "${1}" == "autoload_dirs" ]; then
-        _bd_autoload_dirs ${@}
+    if [[ "${1}" == "dir"* ]] || [ "${1}" == "autoloader_dirs" ]; then
+        _bd_autoloader_dirs ${@}
     fi
 
     if [[ "${1}" == "env"* ]]; then
@@ -57,24 +57,24 @@ _bd_sundry() {
 }
 
 # info BD_AUTOLOADER_DIRS array
-_bd_autoload_dirs() {
+_bd_autoloader_dirs() {
     _bd_debug "${FUNCNAME}(${@})" 55
 
     if [ ${#2} -gt 0 ]; then
         if [ "${2}" == 'hash' ] || [ "${2}" == 'ls' ]; then
-            local bd_autoload_dir bd_autoload_file
-            for bd_autoload_dir in "${BD_AUTOLOADER_DIRS[@]}"; do
-                if [ -d "${bd_autoload_dir}" ]; then
-                    echo "# ${bd_autoload_dir}"
+            local bd_autoloader_dir bd_autoloader_file
+            for bd_autoloader_dir in "${BD_AUTOLOADER_DIRS[@]}"; do
+                if [ -d "${bd_autoloader_dir}" ]; then
+                    echo "# ${bd_autoloader_dir}"
                     echo
-                    for bd_autoload_file in "${bd_autoload_dir}"/*.{bash,sh}; do
-                        if [ -r "${bd_autoload_file}" ]; then
-                            _bd_debug "bd_autoload_file=${bd_autoload_file}" 18
+                    for bd_autoloader_file in "${bd_autoloader_dir}"/*.{bash,sh}; do
+                        if [ -r "${bd_autoloader_file}" ]; then
+                            _bd_debug "bd_autoloader_file=${bd_autoloader_file}" 18
                             if [ "${2}" == 'hash' ]; then
-                                command md5sum "${bd_autoload_file}"
+                                command md5sum "${bd_autoloader_file}"
                             fi
                             if [ "${2}" == 'ls' ]; then
-                                command ls -1d "${bd_autoload_file}"
+                                command ls -1d "${bd_autoloader_file}"
                             fi
                         fi
                     done

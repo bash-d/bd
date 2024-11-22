@@ -182,10 +182,10 @@ _bd_bits_hash() {
     echo "${BD_BITS_DIR}"
 
     echo
-    local bd_autoload_dir bd_autoload_file
-    for bd_autoload_file in "${BD_BITS_DIR}"/*.{bash,sh}; do
-        if [ -r "${bd_autoload_file}" ]; then
-            command md5sum "${bd_autoload_file}"
+    local bd_autoloader_dir bd_autoloader_file
+    for bd_autoloader_file in "${BD_BITS_DIR}"/*.{bash,sh}; do
+        if [ -r "${bd_autoloader_file}" ]; then
+            command md5sum "${bd_autoloader_file}"
         fi
     done
     echo
