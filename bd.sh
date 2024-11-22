@@ -48,6 +48,12 @@ export BD_VERSION=0.46.0
 # functions
 #
 
+# mimic ksh/zsh autoload builtin
+autoload() {
+    _bd_autoload ${@}
+}
+export -f autoload
+
 # primary functional interfce for this script
 bd() {
     [ -r "${BD_SOURCE}" ] && . "${BD_SOURCE}" ${@}
@@ -65,6 +71,11 @@ if ! type -t _bd_ansi &> /dev/null; then
         export -f _bd_ansi
     fi
 fi
+
+# mimic ksh/zsh function autoload
+_bd_autoload() {
+    ''
+}
 
 # start the autoloader procedure
 _bd_autoloader() {
@@ -326,16 +337,21 @@ _bd_help() {
     local bd_help=''
     bd_help+="usage: bd [option]\n"
     bd_help+="\n"
+
     bd_help+="options:\n"
     bd_help+="\n"
+
     bd_help+="  ['' | *]                            - (default) invoke autoloader\n"
     bd_help+="\n"
+
     bd_help+="  env [BD_* variable]                 - display BD_* environment variables & values, and optionally the value of a single variable\n"
     bd_help+="  dir [hash | ls]                     - display only BD_AUTOLOADER_DIRS array values, and optionally hash or list them\n"
     bd_help+="\n"
+
     bd_help+="  license                             - display MIT license\n"
     bd_help+="  version                             - display version\n"
     bd_help+="\n"
+
     bd_help+="  upgrade                             - upgrade bd; pull the latest version from "
     if [ ${#BD_GIT_URL} -gt 0 ]; then
         bd_help+="${BD_GIT_URL}"
@@ -343,11 +359,13 @@ _bd_help() {
         bd_help+="GitHub"
     fi
     bd_help+="\n"
+
     bd_help+="\n"
     bd_help+="  bits get <url> [name]               - get a file from an <url> and put it in ${bd_bits_dir}/[name]\n"
     bd_help+="  bits [hash | ls]                    - display all (.bash & .sh) files in ${bd_bits_dir}\n"
     bd_help+="  bits rm <name>                      - remove bits named <name> from ${bd_bits_dir}\n"
     #bd_help+="  bits put <file>                     - get a file and put/upload it to <url>\n" # WIP
+
     bd_help+="\n"
     bd_help+="  functions                           - export public _bd_ functions but do not invoke autoloader\n"
     bd_help+="\n"
