@@ -2,7 +2,7 @@
 
 ### Automatic Installation (backup & replace existing .bash_profile/.bashrc)
 
-```
+```sh
 # main, latest
 curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | bash -s _ replace && source ~/.bash_profile
 ```
