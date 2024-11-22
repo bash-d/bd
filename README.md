@@ -1,6 +1,6 @@
 # Autoloader for Bash
 
-[Overview](https://github.com/bash-d/bd/tree/main/doc)
+[Documentation](https://github.com/bash-d/bd/tree/main/doc)
 
 ### Automatic Installation (backup & replace existing .bash_profile/.bashrc)
 
@@ -20,5 +20,5 @@ cd; curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | /u
 
 [MIT License](https://github.com/bash-d/bd/blob/main/LICENSE.md)
 
-## An Example
+## Example
 <img src="example/bd-example.gif?raw=true">
