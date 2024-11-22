@@ -92,6 +92,39 @@ _bd_autoloader() {
 }
 export -f _bd_autoloader
 
+# add only unique, existing directories to the BD_AUTOLOADER_DIRS array (& prevent dupes & preserve the given order)
+_bd_autoloader_dir() {
+    _bd_debug "${FUNCNAME}(${@})" 55
+
+    local bd_dir_name="${1//\/\//\/}"
+
+    bd_dir_name="${bd_dir_name//\/\//\/}"
+    bd_dir_name="${bd_dir_name//\/\//\/}"
+
+    _bd_debug "1 bd_dir_name = ${bd_dir_name}" 6
+
+    [ ${#bd_dir_name} -eq 0 ] && return 1
+
+    [ ! -d "${bd_dir_name}" ] && return 1
+
+    bd_dir_name="$(_bd_realpath "${bd_dir_name}")"
+
+    _bd_debug "2 bd_dir_name = ${bd_dir_name}" 6
+
+    [ ${#BD_AUTOLOADER_DIRS} -eq 0 ] && export BD_AUTOLOADER_DIRS=()
+
+    local bd_dir_exists=0 # false
+    local bd_autoloader_dir
+
+    for bd_autoloader_dir in ${BD_AUTOLOADER_DIRS[@]}; do
+        [ ${bd_dir_exists} -eq 1 ] && break
+        [ "${bd_autoloader_dir}" == "${bd_dir_name}" ] && bd_dir_exists=1
+    done
+
+    [ ${bd_dir_exists} -eq 0 ] && BD_AUTOLOADER_DIRS+=("${bd_dir_name}") && _bd_debug "bd_dir_name = ${bd_dir_name}" 2
+}
+export -f _bd_autoloader_dir
+
 # predictably execute commands from every (.bash or .sh) file into the current shell
 _bd_autoloader_execute() {
     _bd_debug "${FUNCNAME}(${@})" 55
@@ -287,38 +320,41 @@ _bd_debug_ms() {
 }
 export -f _bd_debug_ms
 
-# add only unique, existing directories to the BD_AUTOLOADER_DIRS array (& prevent dupes & preserve the given order)
-_bd_autoloader_dir() {
-    _bd_debug "${FUNCNAME}(${@})" 55
+# display help
+_bd_help() {
+    local bd_bits_dir="${BD_BITS_DIR:-${BD_DIR}/etc/bash.d/bits}"
+    local bd_help=''
+    bd_help+="usage: bd [option]\n"
+    bd_help+="\n"
+    bd_help+="options:\n"
+    bd_help+="\n"
+    bd_help+="  ['' | *]                            - (default) invoke autoloader\n"
+    bd_help+="\n"
+    bd_help+="  env [BD_* variable]                 - display BD_* environment variables & values, and optionally the value of a single variable\n"
+    bd_help+="  dir [hash | ls]                     - display only BD_AUTOLOADER_DIRS array values, and optionally hash or list them\n"
+    bd_help+="\n"
+    bd_help+="  license                             - display MIT license\n"
+    bd_help+="  version                             - display version\n"
+    bd_help+="\n"
+    bd_help+="  upgrade                             - upgrade bd; pull the latest version from "
+    if [ ${#BD_GIT_URL} -gt 0 ]; then
+        bd_help+="${BD_GIT_URL}"
+    else
+        bd_help+="GitHub"
+    fi
+    bd_help+="\n"
+    bd_help+="\n"
+    bd_help+="  bits get <url> [name]               - get a file from an <url> and put it in ${bd_bits_dir}/[name]\n"
+    bd_help+="  bits [hash | ls]                    - display all (.bash & .sh) files in ${bd_bits_dir}\n"
+    bd_help+="  bits rm <name>                      - remove bits named <name> from ${bd_bits_dir}\n"
+    #bd_help+="  bits put <file>                     - get a file and put/upload it to <url>\n" # WIP
+    bd_help+="\n"
+    bd_help+="  functions                           - export public _bd_ functions but do not invoke autoloader\n"
+    bd_help+="\n"
+    bd_help+="  [help | h | --help | -h]            - this message\n"
 
-    local bd_dir_name="${1//\/\//\/}"
-
-    bd_dir_name="${bd_dir_name//\/\//\/}"
-    bd_dir_name="${bd_dir_name//\/\//\/}"
-
-    _bd_debug "1 bd_dir_name = ${bd_dir_name}" 6
-
-    [ ${#bd_dir_name} -eq 0 ] && return 1
-
-    [ ! -d "${bd_dir_name}" ] && return 1
-
-    bd_dir_name="$(_bd_realpath "${bd_dir_name}")"
-
-    _bd_debug "2 bd_dir_name = ${bd_dir_name}" 6
-
-    [ ${#BD_AUTOLOADER_DIRS} -eq 0 ] && export BD_AUTOLOADER_DIRS=()
-
-    local bd_dir_exists=0 # false
-    local bd_autoloader_dir
-
-    for bd_autoloader_dir in ${BD_AUTOLOADER_DIRS[@]}; do
-        [ ${bd_dir_exists} -eq 1 ] && break
-        [ "${bd_autoloader_dir}" == "${bd_dir_name}" ] && bd_dir_exists=1
-    done
-
-    [ ${bd_dir_exists} -eq 0 ] && BD_AUTOLOADER_DIRS+=("${bd_dir_name}") && _bd_debug "bd_dir_name = ${bd_dir_name}" 2
+    printf "${bd_help}"
 }
-export -f _bd_autoloader_dir
 
 # load all config files & directories
 _bd_load_config() {
