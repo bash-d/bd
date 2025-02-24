@@ -42,7 +42,7 @@ if [ "${BASH_SOURCE}" == '' ]; then
     return 1 &> /dev/null
 fi
 
-export BD_VERSION=0.46.0
+export BD_VERSION=0.46.1
 
 #
 # functions
