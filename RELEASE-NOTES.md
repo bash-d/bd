@@ -1,4 +1,5 @@
 # 0.46.1
+- example/.bashrc: source /etc/profile
 - etc/bash.d/bd-root.sh: preserve WAYLAND_DISPLAY
 
 # 0.46.0
