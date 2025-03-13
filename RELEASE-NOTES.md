@@ -1,6 +1,8 @@
 # 0.46.1
-- example/.bashrc: source /etc/profile
+- bd.sh: don't unset BD_CLIPBOARD
 - etc/bash.d/bd-root.sh: preserve WAYLAND_DISPLAY
+- etc/bash.d/bd-root.sh: preserve BD_CLIPBOARD
+- example/.bashrc: source /etc/profile
 
 # 0.46.0
 -  bd.sh: allow setting BD_SUB_DIR

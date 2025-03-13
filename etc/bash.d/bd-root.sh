@@ -61,6 +61,7 @@ if [ "${USER}" != "root" ]; then
                 fi
 
                 export BD_ROOT_SUDO_MUST_PRESERVE_ENV="BD_HOME,BD_USER"
+                [ "${BD_CLIPBOARD}" != "" ] && BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",BD_CLIPBOARD"
                 [ "${BD_ROOT_SUDO_PRESERVE_ENV}" != "" ] && BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",${BD_ROOT_SUDO_PRESERVE_ENV}"
                 [[ "${BD_ROOT_SUDO_MUST_PRESERVE_ENV}" != *",SSH_AUTH_SOCK"* ]] && [ "${SSH_AUTH_SOCK}" != "" ] && BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",SSH_AUTH_SOCK"
 

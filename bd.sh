@@ -758,7 +758,7 @@ _bd_namespace_reset() {
                 _bd_private "${bd_variable_name}" && continue
 
                 # exclude these, too
-                [ "${bd_variable_name}" == 'BD_BASH_INIT_FILE' ] && continue
+                [ "${bd_variable_name}" == 'BD_CLIPBOARD' ] && continue
                 [ "${bd_variable_name}" == 'BD_DEBUG' ] && continue
                 [ "${bd_variable_name}" == 'BD_DIR' ] && continue
                 [ "${bd_variable_name}" == 'BD_HOME' ] && continue
