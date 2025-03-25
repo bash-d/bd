@@ -20,7 +20,7 @@ This script significantly boosts the usability of the `bash-d` system by making 
 
 ## Integration with `bd.sh`
 
-* Relies on the presence of the `bd` environment and directory structure (e.g., BD_AUTOLOAD_DIR) for proper operation.
+* Relies on the presence of the `bd` environment and directory structure (e.g., BD_AUTOLOADER_DIR) for proper operation.
 * Complements other `bd` components by making their functionality more accessible and user-friendly.
 
 ## Key Features

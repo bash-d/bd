@@ -1,4 +1,4 @@
-# bd.sh: bash directory (bash.d) autoloader
+# bd.sh: an autoloader for bash
 
 # https://github.com/bash-d/bd/blob/main/README.md
 
@@ -42,11 +42,17 @@ if [ "${BASH_SOURCE}" == '' ]; then
     return 1 &> /dev/null
 fi
 
-export BD_VERSION=0.45.1
+export BD_VERSION=0.46.1
 
 #
 # functions
 #
+
+# mimic ksh/zsh autoload builtin
+autoload() {
+    _bd_autoload ${@}
+}
+export -f autoload
 
 # primary functional interfce for this script
 bd() {
@@ -56,8 +62,8 @@ export -f bd
 
 # stub _bd_ansi() until bd-ansi.sh is fully loaded (needed for embedded _bd_debug)
 if ! type -t _bd_ansi &> /dev/null; then
-    if [ -r "${BD_DIR}/${BD_AUTOLOAD_SUB_DIR}/bd-ansi.sh" ]; then
-        . "${BD_DIR}/${BD_AUTOLOAD_SUB_DIR}/bd-ansi.sh"
+    if [ -r "${BD_DIR}/${BD_SUB_DIR}/bd-ansi.sh" ]; then
+        . "${BD_DIR}/${BD_SUB_DIR}/bd-ansi.sh"
     else
         _bd_ansi() {
             return
@@ -66,8 +72,13 @@ if ! type -t _bd_ansi &> /dev/null; then
     fi
 fi
 
-# start the autoload procedure
+# mimic ksh/zsh function autoload
 _bd_autoload() {
+    ''
+}
+
+# start the autoloader procedure
+_bd_autoloader() {
     _bd_debug "${FUNCNAME}(${@})" 55
 
     local bd_start_arg="${1}"
@@ -84,108 +95,142 @@ _bd_autoload() {
         return 1
     fi
 
-    # autoload directory array
+    # directory autoloader array
 
-    _bd_autoload_execute_array "${BD_AUTOLOAD_DIRS[@]}"
+    _bd_autoloader_execute_array "${BD_AUTOLOADER_DIRS[@]}"
 
     return $?
 }
-export -f _bd_autoload
+export -f _bd_autoloader
 
-# predictably execute commands from every (.bash or .sh) file in the current shell (autoload) a given directory
-_bd_autoload_execute() {
+# add only unique, existing directories to the BD_AUTOLOADER_DIRS array (& prevent dupes & preserve the given order)
+_bd_autoloader_dir() {
     _bd_debug "${FUNCNAME}(${@})" 55
 
-    local bd_autoload_execute_dir="${1}"
+    local bd_dir_name="${1//\/\//\/}"
 
-    if [ -d "${bd_autoload_execute_dir}" ] && [ -r "${bd_autoload_execute_dir}" ]; then
-        local bd_autoload_execute_file
-        local bd_autoload_execute_files=()
+    bd_dir_name="${bd_dir_name//\/\//\/}"
+    bd_dir_name="${bd_dir_name//\/\//\/}"
+
+    _bd_debug "1 bd_dir_name = ${bd_dir_name}" 6
+
+    [ ${#bd_dir_name} -eq 0 ] && return 1
+
+    [ ! -d "${bd_dir_name}" ] && return 1
+
+    bd_dir_name="$(_bd_realpath "${bd_dir_name}")"
+
+    _bd_debug "2 bd_dir_name = ${bd_dir_name}" 6
+
+    [ ${#BD_AUTOLOADER_DIRS} -eq 0 ] && export BD_AUTOLOADER_DIRS=()
+
+    local bd_dir_exists=0 # false
+    local bd_autoloader_dir
+
+    for bd_autoloader_dir in ${BD_AUTOLOADER_DIRS[@]}; do
+        [ ${bd_dir_exists} -eq 1 ] && break
+        [ "${bd_autoloader_dir}" == "${bd_dir_name}" ] && bd_dir_exists=1
+    done
+
+    [ ${bd_dir_exists} -eq 0 ] && BD_AUTOLOADER_DIRS+=("${bd_dir_name}") && _bd_debug "bd_dir_name = ${bd_dir_name}" 2
+}
+export -f _bd_autoloader_dir
+
+# predictably execute commands from every (.bash or .sh) file into the current shell
+_bd_autoloader_execute() {
+    _bd_debug "${FUNCNAME}(${@})" 55
+
+    local bd_autoloader_execute_dir="${1}"
+
+    if [ -d "${bd_autoloader_execute_dir}" ] && [ -r "${bd_autoloader_execute_dir}" ]; then
+        local bd_autoloader_execute_file
+        local bd_autoloader_execute_files=()
 
         # LC_COLLATE consistency hack (due to bsd/darwin differences)
         # https://collation-charts.org/fbsd54/
 
-        local bd_autoload_execute_collate="${LC_COLLATE}"
+        local bd_autoloader_execute_collate="${LC_COLLATE}"
 
         LC_COLLATE=POSIX # required for consistent collation across operating systems
-        for bd_autoload_execute_file in "${bd_autoload_execute_dir}"/*\.{bash,sh}; do
-            bd_autoload_execute_files+=("${bd_autoload_execute_file}")
+        for bd_autoloader_execute_file in "${bd_autoloader_execute_dir}"/*\.{bash,sh}; do
+            bd_autoloader_execute_files+=("${bd_autoloader_execute_file}")
         done
 
-        [ ${#bd_autoload_execute_collate} -gt 0 ] && LC_COLLATE="${bd_autoload_execute_collate}" || unset -v LC_COLLATE
+        [ ${#bd_autoloader_execute_collate} -gt 0 ] && LC_COLLATE="${bd_autoloader_execute_collate}" || unset -v LC_COLLATE
 
-        for bd_autoload_execute_file in "${bd_autoload_execute_files[@]}"; do
+        for bd_autoloader_execute_file in "${bd_autoloader_execute_files[@]}"; do
 
-            if [ "${bd_autoload_execute_file}" == "${BD_SOURCE}" ]; then
+            if [ "${bd_autoloader_execute_file}" == "${BD_SOURCE}" ]; then
                 # relative location
-                _bd_debug "${FUNCNAME} ${bd_autoload_execute_file} matches relative path" 13
+                _bd_debug "${FUNCNAME} ${bd_autoloader_execute_file} matches relative path" 13
                 continue
             fi
 
-            if [ "${bd_autoload_execute_file}" == "${BD_SOURCE##*/}" ]; then
+            if [ "${bd_autoloader_execute_file}" == "${BD_SOURCE##*/}" ]; then
                 # basename
-                _bd_debug "${FUNCNAME}) ${bd_autoload_execute_file} matches basename" 13
+                _bd_debug "${FUNCNAME}) ${bd_autoloader_execute_file} matches basename" 13
                 continue
             fi
 
-            if [ -r "${bd_autoload_execute_file}" ]; then
-                local bd_autoload_execute_begin_time
+            if [ -r "${bd_autoloader_execute_file}" ]; then
+                local bd_autoloader_execute_begin_time
 
                 if [ ${#BD_DEBUG} -gt 0 ]; then
-                    bd_autoload_execute_begin_time=$(_bd_uptime)
+                    bd_autoloader_execute_begin_time=$(_bd_uptime)
                 fi
 
-                _bd_debug "source  ${bd_autoload_execute_file} ..." 4
+                _bd_debug "source  ${bd_autoloader_execute_file} ..." 4
 
                 # execute commands in the current shell
-                . "${bd_autoload_execute_file}" '' # pass an empty arg to ${1}
+                . "${bd_autoloader_execute_file}" '' # pass an empty arg to ${1}
 
                 if [ ${#BD_DEBUG} -gt 0 ]; then
-                    local bd_autoload_execute_end_time bd_autoload_execute_total_time bd_autoload_execute_total_ms
+                    local bd_autoloader_execute_end_time bd_autoloader_execute_total_time bd_autoloader_execute_total_ms
 
-                    bd_autoload_execute_end_time=$(_bd_uptime)
-                    bd_autoload_execute_total_time=$((${bd_autoload_execute_end_time}-${bd_autoload_execute_begin_time}))
-                    bd_autoload_execute_total_ms=$(_bd_debug_ms ${bd_autoload_execute_total_time})
-                    _bd_debug "sourced ${bd_autoload_execute_file} ${bd_autoload_execute_total_ms}" 3
+                    bd_autoloader_execute_end_time=$(_bd_uptime)
+                    bd_autoloader_execute_total_time=$((${bd_autoloader_execute_end_time}-${bd_autoloader_execute_begin_time}))
+                    bd_autoloader_execute_total_ms=$(_bd_debug_ms ${bd_autoloader_execute_total_time})
+                    _bd_debug "sourced ${bd_autoloader_execute_file} ${bd_autoloader_execute_total_ms}" 3
                 fi
             fi
         done
     fi
 }
-export -f _bd_autoload_execute
+export -f _bd_autoloader_execute
 
-# call _bd_autoload_execute on an array (of directories)
-_bd_autoload_execute_array() {
+# call _bd_autoloader_execute on an array (of directories)
+_bd_autoloader_execute_array() {
     _bd_debug "${FUNCNAME}(${@})" 55
 
     [ ${#1} -eq 0 ] && return 1
 
-    local bd_autoload_dir_name bd_autoload_finish bd_autoload_start bd_autoload_total bd_autoload_total_ms
+    local bd_autoloader_dir_name bd_autoloader_finish bd_autoloader_start bd_autoloader_total bd_autoloader_total_ms
 
-    for bd_autoload_dir_name  in "${@}"; do
-        [ ${#BD_DEBUG} -gt 0 ] && bd_autoload_start=$(_bd_uptime)
+    for bd_autoloader_dir_name  in "${@}"; do
+        [ ${#BD_DEBUG} -gt 0 ] && bd_autoloader_start=$(_bd_uptime)
 
-        _bd_autoload_execute "${bd_autoload_dir_name}"
+        _bd_autoloader_execute "${bd_autoloader_dir_name}"
 
         if [ ${#BD_DEBUG} -gt 0 ]; then
-            bd_autoload_finish=$(_bd_uptime)
-            bd_autoload_total=$((${bd_autoload_finish}-${bd_autoload_start}))
-            bd_autoload_total_ms="$(_bd_debug_ms ${bd_autoload_total})"
-            _bd_debug "_bd_autoload_execute ${bd_autoload_dir_name} ${bd_autoload_total_ms}"
+            bd_autoloader_finish=$(_bd_uptime)
+            bd_autoloader_total=$((${bd_autoloader_finish}-${bd_autoloader_start}))
+            bd_autoloader_total_ms="$(_bd_debug_ms ${bd_autoloader_total})"
+            _bd_debug "_bd_autoloader_execute ${bd_autoloader_dir_name} ${bd_autoloader_total_ms}"
         fi
     done
 }
-export -f _bd_autoload_execute_array
+export -f _bd_autoloader_execute_array
 
 # prepare bash environment for bd
 _bd_bootstrap() {
     _bd_caller || return 1
 
-    export BD_AUTOLOAD_SUB_DIR='etc/bash.d'
     export BD_CONFIG_FILE='.bd.conf'
     export BD_DEBUG=${BD_DEBUG:-0} # level >0 enables debugging
-    export BD_BITS_DIR="${BD_BITS_DIR:-${BD_DIR}/${BD_AUTOLOAD_SUB_DIR}/bits}"
     export BD_SOURCE="$(_bd_realpath "${BASH_SOURCE}")"
+
+    export BD_SUB_DIR="${BD_SUB_DIR:-etc/bash.d}"
+    export BD_BITS_DIR="${BD_BITS_DIR:-${BD_DIR}/${BD_SUB_DIR}/bits}"
 
     _bd_debug "BD_SOURCE = ${BD_SOURCE} (${FUNCNAME})" 2
 
@@ -287,38 +332,48 @@ _bd_debug_ms() {
 }
 export -f _bd_debug_ms
 
-# add only unique, existing directories to the BD_AUTOLOAD_DIRS array (& prevent dupes & preserve the given order)
-_bd_autoload_dir() {
-    _bd_debug "${FUNCNAME}(${@})" 55
+# display help
+_bd_help() {
+    local bd_bits_dir="${BD_BITS_DIR:-${BD_DIR}/etc/bash.d/bits}"
+    local bd_help=''
+    bd_help+="usage: bd [option]\n"
+    bd_help+="\n"
 
-    local bd_dir_name="${1//\/\//\/}"
+    bd_help+="options:\n"
+    bd_help+="\n"
 
-    bd_dir_name="${bd_dir_name//\/\//\/}"
-    bd_dir_name="${bd_dir_name//\/\//\/}"
+    bd_help+="  ['' | *]                            - (default) invoke autoloader\n"
+    bd_help+="\n"
 
-    _bd_debug "1 bd_dir_name = ${bd_dir_name}" 6
+    bd_help+="  env [BD_* variable]                 - display BD_* environment variables & values, and optionally the value of a single variable\n"
+    bd_help+="  dir [hash | ls]                     - display only BD_AUTOLOADER_DIRS array values, and optionally hash or list them\n"
+    bd_help+="\n"
 
-    [ ${#bd_dir_name} -eq 0 ] && return 1
+    bd_help+="  license                             - display MIT license\n"
+    bd_help+="  version                             - display version\n"
+    bd_help+="\n"
 
-    [ ! -d "${bd_dir_name}" ] && return 1
+    bd_help+="  upgrade                             - upgrade bd; pull the latest version from "
+    if [ ${#BD_GIT_URL} -gt 0 ]; then
+        bd_help+="${BD_GIT_URL}"
+    else
+        bd_help+="GitHub"
+    fi
+    bd_help+="\n"
 
-    bd_dir_name="$(_bd_realpath "${bd_dir_name}")"
+    bd_help+="\n"
+    bd_help+="  bits get <url> [name]               - get a file from an <url> and put it in ${bd_bits_dir}/[name]\n"
+    bd_help+="  bits [hash | ls]                    - display all (.bash & .sh) files in ${bd_bits_dir}\n"
+    bd_help+="  bits rm <name>                      - remove bits named <name> from ${bd_bits_dir}\n"
+    #bd_help+="  bits put <file>                     - get a file and put/upload it to <url>\n" # WIP
 
-    _bd_debug "2 bd_dir_name = ${bd_dir_name}" 6
+    bd_help+="\n"
+    bd_help+="  functions                           - export public _bd_ functions but do not invoke autoloader\n"
+    bd_help+="\n"
+    bd_help+="  [help | h | --help | -h]            - this message\n"
 
-    [ ${#BD_AUTOLOAD_DIRS} -eq 0 ] && export BD_AUTOLOAD_DIRS=()
-
-    local bd_dir_exists=0 # false
-    local bd_autoload_dir
-
-    for bd_autoload_dir in ${BD_AUTOLOAD_DIRS[@]}; do
-        [ ${bd_dir_exists} -eq 1 ] && break
-        [ "${bd_autoload_dir}" == "${bd_dir_name}" ] && bd_dir_exists=1
-    done
-
-    [ ${bd_dir_exists} -eq 0 ] && BD_AUTOLOAD_DIRS+=("${bd_dir_name}") && _bd_debug "bd_dir_name = ${bd_dir_name}" 2
+    printf "${bd_help}"
 }
-export -f _bd_autoload_dir
 
 # load all config files & directories
 _bd_load_config() {
@@ -327,31 +382,31 @@ _bd_load_config() {
     # ${BD_BITS_DIR}
     if [ ${#BD_BITS_DIR} -gt 0 ]; then
         if [ "${1}" != 'preload' ] && [ -d "${BD_BITS_DIR}" ] && [ -r "${BD_BITS_DIR}" ]; then
-            _bd_autoload_dir "${BD_BITS_DIR}"
+            _bd_autoloader_dir "${BD_BITS_DIR}"
         fi
     fi
 
     # ${BD_DIR}
-    if [ ${#BD_DIR} -gt 0 ] && [ ${#BD_AUTOLOAD_SUB_DIR} -gt 0 ]; then
+    if [ ${#BD_DIR} -gt 0 ] && [ ${#BD_SUB_DIR} -gt 0 ]; then
         [ -f "${BD_DIR}/${BD_CONFIG_FILE}" ] && [ -r "${BD_DIR}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${BD_DIR}/${BD_CONFIG_FILE}" ${1}
 
-        if [ "${1}" != 'preload' ] && [ -d "${BD_DIR}/${BD_AUTOLOAD_SUB_DIR}" ] && [ -r "${BD_DIR}/${BD_AUTOLOAD_SUB_DIR}" ]; then
-            _bd_autoload_dir "${BD_DIR}/${BD_AUTOLOAD_SUB_DIR}"
+        if [ "${1}" != 'preload' ] && [ -d "${BD_DIR}/${BD_SUB_DIR}" ] && [ -r "${BD_DIR}/${BD_SUB_DIR}" ]; then
+            _bd_autoloader_dir "${BD_DIR}/${BD_SUB_DIR}"
 
             _bd_load_config_dir "${BD_DIR}"
         fi
     fi
 
-    # /${BD_AUTOLOAD_SUB_DIR}/.. (/etc)
-    if [ ${#BD_AUTOLOAD_SUB_DIR} -gt 0 ] && [ "/${BD_AUTOLOAD_SUB_DIR}/.." != "//.." ]; then
-        [ -f "/${BD_AUTOLOAD_SUB_DIR}/../${BD_CONFIG_FILE/./}" ] && [ -r "/${BD_AUTOLOAD_SUB_DIR}/../${BD_CONFIG_FILE/./}" ] && _bd_load_config_file "/${BD_AUTOLOAD_SUB_DIR}/../${BD_CONFIG_FILE/./}" ${1}
+    # /${BD_SUB_DIR}/.. (/etc)
+    if [ ${#BD_SUB_DIR} -gt 0 ] && [ "/${BD_SUB_DIR}/.." != "//.." ]; then
+        [ -f "/${BD_SUB_DIR}/../${BD_CONFIG_FILE/./}" ] && [ -r "/${BD_SUB_DIR}/../${BD_CONFIG_FILE/./}" ] && _bd_load_config_file "/${BD_SUB_DIR}/../${BD_CONFIG_FILE/./}" ${1}
 
-        if [ "${1}" != 'preload' ] && [ -d "/${BD_AUTOLOAD_SUB_DIR}" ] && [ -r "/${BD_AUTOLOAD_SUB_DIR}" ]; then
-            _bd_autoload_dir "/${BD_AUTOLOAD_SUB_DIR}"
+        if [ "${1}" != 'preload' ] && [ -d "/${BD_SUB_DIR}" ] && [ -r "/${BD_SUB_DIR}" ]; then
+            _bd_autoloader_dir "/${BD_SUB_DIR}"
 
             # sub-directories
-            for bd_load_config_dir_name in "/${BD_AUTOLOAD_SUB_DIR}"/*; do
-                [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoload_dir "${bd_load_config_dir_name}"
+            for bd_load_config_dir_name in "/${BD_SUB_DIR}"/*; do
+                [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoloader_dir "${bd_load_config_dir_name}"
             done
 
             _bd_load_config_dir /
@@ -362,12 +417,12 @@ _bd_load_config() {
     if [ ${#HOME} -gt 0 ] && [ "${HOME}" != "/" ]; then
         [ -f "${HOME}/${BD_CONFIG_FILE}" ] && [ -r "${HOME}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${HOME}/${BD_CONFIG_FILE}" ${1}
 
-        if [ "${1}" != 'preload' ] && [ -d "${HOME}/${BD_AUTOLOAD_SUB_DIR}" ] && [ -r "${HOME}/${BD_AUTOLOAD_SUB_DIR}" ]; then
-            _bd_autoload_dir "${HOME}/${BD_AUTOLOAD_SUB_DIR}"
+        if [ "${1}" != 'preload' ] && [ -d "${HOME}/${BD_SUB_DIR}" ] && [ -r "${HOME}/${BD_SUB_DIR}" ]; then
+            _bd_autoloader_dir "${HOME}/${BD_SUB_DIR}"
 
             # sub-directories
-            for bd_load_config_dir_name in "${HOME}/${BD_AUTOLOAD_SUB_DIR}"/*; do
-                [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoload_dir "${bd_load_config_dir_name}"
+            for bd_load_config_dir_name in "${HOME}/${BD_SUB_DIR}"/*; do
+                [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoloader_dir "${bd_load_config_dir_name}"
             done
 
             _bd_load_config_dir "${HOME}"
@@ -378,12 +433,12 @@ _bd_load_config() {
     if [ ${#BD_HOME} -gt 0 ] && [ "${BD_HOME}" != "/" ] && [ "${BD_HOME}" != "${HOME}" ]; then
         [ -f "${BD_HOME}/${BD_CONFIG_FILE}" ] && [ -r "${BD_HOME}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${BD_HOME}/${BD_CONFIG_FILE}" ${1}
 
-        if [ "${1}" != 'preload' ] && [ -d "${BD_HOME}/${BD_AUTOLOAD_SUB_DIR}" ] && [ -r "${BD_HOME}/${BD_AUTOLOAD_SUB_DIR}" ]; then
-            _bd_autoload_dir "${BD_HOME}/${BD_AUTOLOAD_SUB_DIR}"
+        if [ "${1}" != 'preload' ] && [ -d "${BD_HOME}/${BD_SUB_DIR}" ] && [ -r "${BD_HOME}/${BD_SUB_DIR}" ]; then
+            _bd_autoloader_dir "${BD_HOME}/${BD_SUB_DIR}"
 
             # sub-directories
-            for bd_load_config_dir_name in "${BD_HOME}/${BD_AUTOLOAD_SUB_DIR}"/*; do
-                [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoload_dir "${bd_load_config_dir_name}"
+            for bd_load_config_dir_name in "${BD_HOME}/${BD_SUB_DIR}"/*; do
+                [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoloader_dir "${bd_load_config_dir_name}"
             done
 
             _bd_load_config_dir "${BD_HOME}"
@@ -394,12 +449,12 @@ _bd_load_config() {
     if [ ${#PWD} -gt 0 ] && [ "${PWD}" != "/etc" ] && [ "${PWD}" != "${BD_HOME}" ] && [ "${PWD}" != "${HOME}" ]; then
         [ -f "${PWD}/${BD_CONFIG_FILE}" ] && [ -r "${PWD}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${PWD}/${BD_CONFIG_FILE}" ${1}
 
-        if [ "${1}" != 'preload' ] && [ -d "${PWD}/${BD_AUTOLOAD_SUB_DIR}" ] && [ -r "${PWD}/${BD_AUTOLOAD_SUB_DIR}" ]; then
-            _bd_autoload_dir "${PWD}/${BD_AUTOLOAD_SUB_DIR}"
+        if [ "${1}" != 'preload' ] && [ -d "${PWD}/${BD_SUB_DIR}" ] && [ -r "${PWD}/${BD_SUB_DIR}" ]; then
+            _bd_autoloader_dir "${PWD}/${BD_SUB_DIR}"
 
             # sub-directories
-            for bd_load_config_dir_name in "${PWD}/${BD_AUTOLOAD_SUB_DIR}"/*; do
-                [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoload_dir "${bd_load_config_dir_name}"
+            for bd_load_config_dir_name in "${PWD}/${BD_SUB_DIR}"/*; do
+                [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoloader_dir "${bd_load_config_dir_name}"
             done
 
             _bd_load_config_dir "${PWD}"
@@ -410,7 +465,7 @@ _bd_load_config() {
 }
 export -f _bd_load_config
 
-# process BD_AUTOLOAD_CONFIG_DIRS with _bd_autoload_dir(); i.e. look for etc/bash.d in other/specific locations
+# process BD_AUTOLOADER_CONFIG_DIRS with _bd_autoloader_dir(); i.e. look for etc/bash.d in other/specific locations
 _bd_load_config_dir() {
     _bd_debug "${FUNCNAME}(${@})" 55
 
@@ -418,19 +473,19 @@ _bd_load_config_dir() {
 
     _bd_debug "bd_load_config_dir_name = ${bd_load_config_dir_name}" 10
 
-    if [ ${#BD_AUTOLOAD_CONFIG_DIRS} -gt 0 ]; then
+    if [ ${#BD_AUTOLOADER_CONFIG_DIRS} -gt 0 ]; then
         local bd_load_config_dirs
-        for bd_load_config_dirs in "${BD_AUTOLOAD_CONFIG_DIRS[@]}"; do
+        for bd_load_config_dirs in "${BD_AUTOLOADER_CONFIG_DIRS[@]}"; do
             if [ "${bd_load_config_dirs:0:1}" == "/" ]; then
                 # qualified path
-                [ -d "${bd_load_config_dirs}" ] && [ -r "${bd_load_config_dirs}" ] && _bd_autoload_dir "${bd_load_config_dirs}"
+                [ -d "${bd_load_config_dirs}" ] && [ -r "${bd_load_config_dirs}" ] && _bd_autoloader_dir "${bd_load_config_dirs}"
             else
                 # relative path
-                [ -d "${bd_load_config_dir_name}/${bd_load_config_dirs}" ] && [ -r "${bd_load_config_dir_name}/${bd_load_config_dirs}" ] && _bd_autoload_dir "${bd_load_config_dir_name}/${bd_load_config_dirs}"
+                [ -d "${bd_load_config_dir_name}/${bd_load_config_dirs}" ] && [ -r "${bd_load_config_dir_name}/${bd_load_config_dirs}" ] && _bd_autoloader_dir "${bd_load_config_dir_name}/${bd_load_config_dirs}"
             fi
         done
     fi
-    unset -v BD_AUTOLOAD_CONFIG_DIRS
+    unset -v BD_AUTOLOADER_CONFIG_DIRS
 }
 export -f _bd_load_config_dir
 
@@ -470,10 +525,10 @@ _bd_load_config_file() {
             _bd_debug "bd_config_file_variable_value=${bd_config_file_variable_value}" 11
 
             # 0.44.0, note BD_BAG_DIR is deprecated & will be removed in 1.0
-            if [ "${bd_config_file_variable_name}" == 'BD_AUTOLOAD_DIR' ] || [ "${bd_config_file_variable_name}" == 'BD_BAG_DIR' ]; then
+            if [ "${bd_config_file_variable_name}" == 'BD_AUTOLOADER_DIR' ] || [ "${bd_config_file_variable_name}" == 'BD_BAG_DIR' ]; then
                 [ "${bd_config_file_preload}" == "preload" ] && continue
-                _bd_debug "export BD_AUTOLOAD_CONFIG_DIRS+=(\"${bd_config_file_variable_value}\")" 15
-                export BD_AUTOLOAD_CONFIG_DIRS+=("${bd_config_file_variable_value}")
+                _bd_debug "export BD_AUTOLOADER_CONFIG_DIRS+=(\"${bd_config_file_variable_value}\")" 15
+                export BD_AUTOLOADER_CONFIG_DIRS+=("${bd_config_file_variable_value}")
             else
                 [ "${bd_config_file_preload}" != "preload" ] && continue
                 _bd_debug "export ${bd_config_file_variable_name}=\"${bd_config_file_variable_value}\"" 15
@@ -541,7 +596,7 @@ _bd_main() {
 
             _bd_debug "${BD_SOURCE} ${1} pass; invoke autoloader" 10
 
-            _bd_autoload ${@}
+            _bd_autoloader ${@}
             ;;
     esac
 
@@ -599,12 +654,12 @@ _bd_namespace_init() {
 
     _bd_os
 
-    # ensure BD_AUTOLOAD_DIRS, BD_AUTOLOAD_CONFIG_DIRS, BD_BASH_INIT_FILE, BD_HOME, BD_USER, & USER
+    # ensure BD_AUTOLOADER_DIRS, BD_AUTOLOADER_CONFIG_DIRS, BD_BASH_INIT_FILE, BD_HOME, BD_USER, & USER
 
-    unset -v BD_AUTOLOAD_CONFIG_DIRS
+    unset -v BD_AUTOLOADER_CONFIG_DIRS
 
     # TODO: learn requires more testing
-    _bd_true ${BD_LEARN} || export BD_AUTOLOAD_DIRS=()
+    _bd_true ${BD_LEARN} || export BD_AUTOLOADER_DIRS=()
 
     [ "${EUID}" == '0' ] && USER=root
 
@@ -647,7 +702,7 @@ _bd_namespace_init() {
 
     _bd_load_config
 
-    _bd_debug "BD_AUTOLOAD_DIRS = ${BD_AUTOLOAD_DIRS[@]} # (after _bd_load_config)" 1
+    _bd_debug "BD_AUTOLOADER_DIRS = ${BD_AUTOLOADER_DIRS[@]} # (after _bd_load_config)" 1
 
 }
 export -f _bd_namespace_init
@@ -703,7 +758,7 @@ _bd_namespace_reset() {
                 _bd_private "${bd_variable_name}" && continue
 
                 # exclude these, too
-                [ "${bd_variable_name}" == 'BD_BASH_INIT_FILE' ] && continue
+                [ "${bd_variable_name}" == 'BD_CLIPBOARD' ] && continue
                 [ "${bd_variable_name}" == 'BD_DEBUG' ] && continue
                 [ "${bd_variable_name}" == 'BD_DIR' ] && continue
                 [ "${bd_variable_name}" == 'BD_HOME' ] && continue
@@ -715,7 +770,7 @@ _bd_namespace_reset() {
 
                 [[ "${bd_variable_name}" == 'BD_'*'_EXPORT' ]] && continue
 
-                if [ "${bd_variable_name}" == 'BD_AUTOLOAD_DIRS' ]; then
+                if [ "${bd_variable_name}" == 'BD_AUTOLOADER_DIRS' ]; then
                     if ! _bd_true ${BD_LEARN}; then
                         bd_variable_names+=("${bd_variable_name}")
                     fi
@@ -731,10 +786,10 @@ _bd_namespace_reset() {
     if [ "${1}" == 'private' ]; then
         # private function names
 
-        bd_function_names+=(_bd_autoload)
-        bd_function_names+=(_bd_autoload_dir)
-        bd_function_names+=(_bd_autoload_execute)
-        bd_function_names+=(_bd_autoload_execute_array)
+        bd_function_names+=(_bd_autoloader)
+        bd_function_names+=(_bd_autoloader_dir)
+        bd_function_names+=(_bd_autoloader_execute)
+        bd_function_names+=(_bd_autoloader_execute_array)
         bd_function_names+=(_bd_bootstrap)
         bd_function_names+=(_bd_caller)
         bd_function_names+=(_bd_load_config)
@@ -812,7 +867,7 @@ _bd_private() {
 
     bd_private_variable_names=()
 
-    bd_private_variable_names+=('BD_AUTOLOAD_SUB_DIR')
+    bd_private_variable_names+=('BD_SUB_DIR')
     bd_private_variable_names+=('BD_CONFIG_FILE')
     bd_private_variable_names+=('BD_DECLARE')
     bd_private_variable_names+=('BD_OIFS')

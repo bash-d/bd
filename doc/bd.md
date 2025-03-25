@@ -46,7 +46,7 @@ The Bash script, `bd.sh`, implements a sophisticated directory autoloader for ma
 
 ### Utility Functions
 
-* `_bd_autoload` - Starts the autoload procedure to predictably source files in the current shell.
+* `_bd_autoloader` - Starts the autoloader procedure to predictably source files in the current shell.
 * `_bd_debug` - Provides consistent, color-coded debug messages for improved readability.
 * `_bd_os` - Determines the operating system & exports `BD_OS*` values for use in other scripts.
 * `_bd_realpath` - A portable replacement for `realpath` or `readlink`.
@@ -55,7 +55,7 @@ The Bash script, `bd.sh`, implements a sophisticated directory autoloader for ma
 
 ### Bootstrap and Initialization
 
-* Sets up essential environment variables, including `BD_AUTOLOAD_DIRS`, `BD_HOME`, and `BD_USER`.
+* Sets up essential environment variables, including `BD_AUTOLOADER_DIRS`, `BD_HOME`, and `BD_USER`.
 * Detects and initializes the appropriate directories and configurations based on the current shell environment.
 
 ### Error Handling and Safety

@@ -1,3 +1,17 @@
+# 0.46.1
+- bd.sh: don't unset BD_CLIPBOARD
+- etc/bash.d/bd-root.sh: preserve WAYLAND_DISPLAY
+- etc/bash.d/bd-root.sh: preserve BD_CLIPBOARD
+- example/.bashrc: source /etc/profile
+
+# 0.46.0
+-  bd.sh: allow setting BD_SUB_DIR
+-  bd.sh: renamed BD_AUTOLOADER_SUB_DIR to BD_SUB_DIR
+-  bd.sh: started considering lazy loading, like ksh/zsh autoload
+-  bd.sh: etc/bash.d/bd-help.sh: removed; moved into bd.sh
+-  bd.sh: renamed bd_autoload* to bd_autoloader*
+-  all: renamed BD_AUTOLOAD_* to BD_AUTOLAODER_* 0.45.1
+
 # 0.45.1
 - all: renamed 'snippets' to 'bits'
 

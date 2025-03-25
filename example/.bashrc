@@ -31,10 +31,10 @@ if [ ${#SSH_CONNECTION} -gt 0 ] && [ ${#SSH_TTY} -eq 0 ] && [ ${#STY} -eq 0 ] &&
 fi
 
 #
-# source system bashrc
+# source system profile
 #
 
-[ -f /etc/bashrc ] && source /etc/bashrc
+[ -f /etc/profile ] && source /etc/profile
 
 #
 # bash.d (0.40+)
