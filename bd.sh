@@ -1,4 +1,4 @@
-# bd.sh: bash directory (bash.d) autoloader
+# bd.sh: an autoloader for bash
 
 # https://github.com/bash-d/bd/blob/main/README.md
 
