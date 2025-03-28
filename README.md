@@ -16,7 +16,7 @@ cd; curl -Ls https://raw.githubusercontent.com/bash-d/bd/main/bd-install.sh | /u
 [ -r ~/.bd/bd.sh ] && source ~/.bd/bd.sh ${@}
 ```
 
-## mxample
+## example
 <img src="example/bd-example.gif?raw=true">
 
 ## license
