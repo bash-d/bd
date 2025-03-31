@@ -70,6 +70,7 @@ if [ "${USER}" != "root" ]; then
                 export BD_ROOT_SUDO_WAYLAND_DISPLAY=""
                 if [ "${WAYLAND_DISPLAY}" != "" ] && [ "${XDG_RUNTIME_DIR}" != "" ]; then
                     BD_ROOT_SUDO_WAYLAND_DISPLAY="WAYLAND_DISPLAY=${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY} "
+                    BD_ROOT_SUDO_WAYLAND_DISPLAY="${BD_ROOT_SUDO_WAYLAND_DISPLAY//\/\//\/}"
                     BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",WAYLAND_DISPLAY"
                 fi
 
