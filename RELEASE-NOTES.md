@@ -1,5 +1,5 @@
 # 0.46.1.1
-- bd.sh: don't unset BD_PROMPT_HOOK
+- bd.sh: don't unset BD_PROMPT_COMMAND
 
 # 0.46.1
 - bd.sh: don't unset BD_CLIPBOARD
