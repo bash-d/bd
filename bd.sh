@@ -763,6 +763,7 @@ _bd_namespace_reset() {
                 [ "${bd_variable_name}" == 'BD_DIR' ] && continue
                 [ "${bd_variable_name}" == 'BD_HOME' ] && continue
                 [ "${bd_variable_name}" == 'BD_LEARN' ] && continue
+                [ "${bd_variable_name}" == 'BD_PROMPT_HOOK' ] && continue
                 [ "${bd_variable_name}" == 'BD_SOURCE' ] && continue
                 [ "${bd_variable_name}" == 'BD_BITS_DIR' ] && continue
                 [ "${bd_variable_name}" == 'BD_USER' ] && continue

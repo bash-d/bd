@@ -1,3 +1,6 @@
+# 0.46.1.1
+- bd.sh: don't unset BD_PROMPT_HOOK
+
 # 0.46.1
 - bd.sh: don't unset BD_CLIPBOARD
 - etc/bash.d/bd-root.sh: preserve WAYLAND_DISPLAY
