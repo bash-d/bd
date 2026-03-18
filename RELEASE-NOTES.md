@@ -1,3 +1,6 @@
+# 0.46.2.1
+- bd.sh: fixed repeated autoloading of $HOME
+
 # 0.46.1.1
 - bd.sh: don't unset BD_PROMPT_COMMAND
 

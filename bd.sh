@@ -5,7 +5,7 @@
 # MIT License
 # ===========
 #
-# Copyright (C) 2018-2024 Joseph Tingiris <joseph.tingiris@gmail.com>
+# Copyright (C) 2018-2026 Joseph Tingiris <joseph.tingiris@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ if [ "${BASH_SOURCE}" == '' ]; then
     return 1 &> /dev/null
 fi
 
-export BD_VERSION=0.46.1
+export BD_VERSION=0.46.2.1
 
 #
 # functions
@@ -188,7 +188,7 @@ _bd_autoloader_execute() {
                     local bd_autoloader_execute_end_time bd_autoloader_execute_total_time bd_autoloader_execute_total_ms
 
                     bd_autoloader_execute_end_time=$(_bd_uptime)
-                    bd_autoloader_execute_total_time=$((${bd_autoloader_execute_end_time}-${bd_autoloader_execute_begin_time}))
+                    bd_autoloader_execute_total_time=$((bd_autoloader_execute_end_time - bd_autoloader_execute_begin_time))
                     bd_autoloader_execute_total_ms=$(_bd_debug_ms ${bd_autoloader_execute_total_time})
                     _bd_debug "sourced ${bd_autoloader_execute_file} ${bd_autoloader_execute_total_ms}" 3
                 fi
@@ -206,14 +206,14 @@ _bd_autoloader_execute_array() {
 
     local bd_autoloader_dir_name bd_autoloader_finish bd_autoloader_start bd_autoloader_total bd_autoloader_total_ms
 
-    for bd_autoloader_dir_name  in "${@}"; do
+    for bd_autoloader_dir_name in "${@}"; do
         [ ${#BD_DEBUG} -gt 0 ] && bd_autoloader_start=$(_bd_uptime)
 
         _bd_autoloader_execute "${bd_autoloader_dir_name}"
 
         if [ ${#BD_DEBUG} -gt 0 ]; then
             bd_autoloader_finish=$(_bd_uptime)
-            bd_autoloader_total=$((${bd_autoloader_finish}-${bd_autoloader_start}))
+            bd_autoloader_total=$((bd_autoloader_finish - bd_autoloader_start))
             bd_autoloader_total_ms="$(_bd_debug_ms ${bd_autoloader_total})"
             _bd_debug "_bd_autoloader_execute ${bd_autoloader_dir_name} ${bd_autoloader_total_ms}"
         fi
@@ -242,7 +242,7 @@ export -f _bd_bootstrap
 
 # prevent excessive callers
 _bd_caller() {
-    local bd_callers=$((${#BASH_ARGC[@]}-1))
+    local bd_callers=$((${#BASH_ARGC[@]} - 1))
     local bd_callers_max=3
 
     if [ ${bd_callers} -gt ${bd_callers_max} ]; then
@@ -260,14 +260,14 @@ _bd_debug() {
 
     [ ${#1} -eq 0 ] && return 0
 
-    [[ ! "${BD_DEBUG}" =~ ^[0-9]+$ ]] && export BD_DEBUG=0
+    [[ ! ${BD_DEBUG} =~ ^[0-9]+$ ]] && export BD_DEBUG=0
 
     [ "${BD_DEBUG}" == '0' ] && return 0
 
     local bd_debug_msg=(${@})
 
-    local bd_debug_level=${bd_debug_msg[${#bd_debug_msg[@]}-1]}
-    if [[ "${bd_debug_level}" =~ ^[0-9]+$ ]]; then
+    local bd_debug_level=${bd_debug_msg[${#bd_debug_msg[@]} - 1]}
+    if [[ ${bd_debug_level} =~ ^[0-9]+$ ]]; then
         unset -v bd_debug_msg[${#bd_debug_msg[@]}-1] # remove level from bd_debug_msg; TODO: test with older bash versions
     else
         bd_debug_level=0
@@ -296,7 +296,7 @@ _bd_debug() {
         [ ${bd_debug_level} -eq 7 ] && bd_debug_color="_green1"
         [ ${bd_debug_level} -eq 8 ] && bd_debug_color="_red1"
 
-        [ ${#bd_debug_color} -eq 0 ] && let bd_debug_color=${bd_debug_level}+11
+        [ ${#bd_debug_color} -eq 0 ] && let bd_debug_color=bd_debug_level+11
 
         type _bd_ansi &> /dev/null && printf "$(_bd_ansi reset)$(_bd_ansi fg${bd_debug_color})" 1>&2
         printf "[BD_DEBUG:%+2b:%b] [%b] %b" "${bd_debug_level}" "${BD_DEBUG}" "${bd_debug_bash_source}" "${bd_debug_msg}" 1>&2
@@ -319,7 +319,7 @@ _bd_debug_ms() {
 
     local bd_debug_ms_int=${1} bd_debug_ms_msg
 
-    [[ ! "${bd_debug_ms_int}" =~ ^[0-9]+$ ]] && return
+    [[ ! ${bd_debug_ms_int} =~ ^[0-9]+$ ]] && return
 
     [ ${bd_debug_ms_int} -le 100 ] && bd_debug_ms_msg="$(_bd_ansi fg_green1)[${bd_debug_ms_int}ms]$(_bd_ansi reset)"
     [ ${bd_debug_ms_int} -gt 100 ] && bd_debug_ms_msg="$(_bd_ansi fg_magenta1)[${bd_debug_ms_int}ms]$(_bd_ansi reset)"
@@ -377,7 +377,14 @@ _bd_help() {
 
 # load all config files & directories
 _bd_load_config() {
-    local bd_load_config_dir_name
+    local bd_load_config_dir_name bd_pwd
+
+    bd_pwd="${PWD}"
+
+    if [ ! -d "${PWD}/${BD_SUB_DIR}" ]; then
+        _bd_debug "'${PWD}/${BD_SUB_DIR}' directory not found" 15
+        cd
+    fi
 
     # ${BD_BITS_DIR}
     if [ ${#BD_BITS_DIR} -gt 0 ]; then
@@ -413,40 +420,30 @@ _bd_load_config() {
         fi
     fi
 
-    # ${HOME}
-    if [ ${#HOME} -gt 0 ] && [ "${HOME}" != "/" ]; then
-        [ -f "${HOME}/${BD_CONFIG_FILE}" ] && [ -r "${HOME}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${HOME}/${BD_CONFIG_FILE}" ${1}
-
-        if [ "${1}" != 'preload' ] && [ -d "${HOME}/${BD_SUB_DIR}" ] && [ -r "${HOME}/${BD_SUB_DIR}" ]; then
-            _bd_autoloader_dir "${HOME}/${BD_SUB_DIR}"
-
-            # sub-directories
-            for bd_load_config_dir_name in "${HOME}/${BD_SUB_DIR}"/*; do
-                [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoloader_dir "${bd_load_config_dir_name}"
-            done
-
-            _bd_load_config_dir "${HOME}"
-        fi
-    fi
-
     # ${BD_HOME}
     if [ ${#BD_HOME} -gt 0 ] && [ "${BD_HOME}" != "/" ] && [ "${BD_HOME}" != "${HOME}" ]; then
-        [ -f "${BD_HOME}/${BD_CONFIG_FILE}" ] && [ -r "${BD_HOME}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${BD_HOME}/${BD_CONFIG_FILE}" ${1}
+        if [ "${PWD}" == "${HOME}" ] && [ "${HOME}" != "${BD_HOME}" ]; then
+            [ -f "${BD_HOME}/${BD_CONFIG_FILE}" ] && [ -r "${BD_HOME}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${BD_HOME}/${BD_CONFIG_FILE}" ${1}
 
-        if [ "${1}" != 'preload' ] && [ -d "${BD_HOME}/${BD_SUB_DIR}" ] && [ -r "${BD_HOME}/${BD_SUB_DIR}" ]; then
-            _bd_autoloader_dir "${BD_HOME}/${BD_SUB_DIR}"
+            if [ "${1}" != 'preload' ] && [ -d "${BD_HOME}/${BD_SUB_DIR}" ] && [ -r "${BD_HOME}/${BD_SUB_DIR}" ]; then
+                _bd_debug "processing alternate BD_HOME ${BD_HOME} because PWD is HOME (${HOME})" 12
 
-            # sub-directories
-            for bd_load_config_dir_name in "${BD_HOME}/${BD_SUB_DIR}"/*; do
-                [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoloader_dir "${bd_load_config_dir_name}"
-            done
+                _bd_autoloader_dir "${BD_HOME}/${BD_SUB_DIR}"
 
-            _bd_load_config_dir "${BD_HOME}"
+                # sub-directories
+                for bd_load_config_dir_name in "${BD_HOME}/${BD_SUB_DIR}"/*; do
+                    [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoloader_dir "${bd_load_config_dir_name}"
+                done
+
+                _bd_load_config_dir "${BD_HOME}"
+            fi
+        else
+            _bd_debug "skipping BD_HOME ${BD_HOME} because PWD is not HOME" 22
         fi
     fi
 
     # ${PWD}
-    if [ ${#PWD} -gt 0 ] && [ "${PWD}" != "/etc" ] && [ "${PWD}" != "${BD_HOME}" ] && [ "${PWD}" != "${HOME}" ]; then
+    if [ ${#PWD} -gt 0 ] && [ "${PWD}" != "/etc" ]; then
         [ -f "${PWD}/${BD_CONFIG_FILE}" ] && [ -r "${PWD}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${PWD}/${BD_CONFIG_FILE}" ${1}
 
         if [ "${1}" != 'preload' ] && [ -d "${PWD}/${BD_SUB_DIR}" ] && [ -r "${PWD}/${BD_SUB_DIR}" ]; then
@@ -460,6 +457,8 @@ _bd_load_config() {
             _bd_load_config_dir "${PWD}"
         fi
     fi
+
+    cd "${bd_pwd}" 2> /dev/null || return 1
 
     unset -v bd_load_config_dir_name
 }
@@ -502,10 +501,10 @@ _bd_load_config_file() {
         local bd_config_file_line bd_config_file_variable_name bd_config_file_variable_value
         while read -r bd_config_file_line; do
             # only BD_* variables are supported
-            [[ "${bd_config_file_line}" != 'BD_'* ]] && continue
+            [[ ${bd_config_file_line} != 'BD_'* ]] && continue
 
             # resetting these will break bd & are not supported in config files
-            [[ "${bd_config_file_line}" == 'BD_DIR'* ]] && continue
+            [[ ${bd_config_file_line} == 'BD_DIR'* ]] && continue
 
             _bd_debug "bd_config_file_line=${bd_config_file_line}" 20
 
@@ -514,13 +513,13 @@ _bd_load_config_file() {
             _bd_debug "bd_config_file_variable_name=${bd_config_file_variable_name}" 4
 
             bd_config_file_variable_value="${bd_config_file_line#*=}"
-            bd_config_file_variable_value="${bd_config_file_variable_value/\~/~}" # replace ~
-            bd_config_file_variable_value="${bd_config_file_variable_value%%'#'*}" # remove trailing comments
+            bd_config_file_variable_value="${bd_config_file_variable_value/\~/~}"                                              # replace ~
+            bd_config_file_variable_value="${bd_config_file_variable_value%%'#'*}"                                             # remove trailing comments
             bd_config_file_variable_value="${bd_config_file_variable_value%"${bd_config_file_variable_value##*[![:space:]]}"}" # remove trailing spaces
-            bd_config_file_variable_value="${bd_config_file_variable_value%\"*}" # remove opening "
-            bd_config_file_variable_value="${bd_config_file_variable_value#\"*}" # remove closing "
-            bd_config_file_variable_value="${bd_config_file_variable_value%\'*}" # remove opening '
-            bd_config_file_variable_value="${bd_config_file_variable_value#\'*}" # remove closing '
+            bd_config_file_variable_value="${bd_config_file_variable_value%\"*}"                                               # remove opening "
+            bd_config_file_variable_value="${bd_config_file_variable_value#\"*}"                                               # remove closing "
+            bd_config_file_variable_value="${bd_config_file_variable_value%\'*}"                                               # remove opening '
+            bd_config_file_variable_value="${bd_config_file_variable_value#\'*}"                                               # remove closing '
 
             _bd_debug "bd_config_file_variable_value=${bd_config_file_variable_value}" 11
 
@@ -566,29 +565,29 @@ _bd_main() {
     local bd_main_option=1
 
     case "${1}" in
-        bits|b|--bits|-b)
+        bits | b | --bits | -b)
             _bd_bits ${@}
             ;;
-        dir*|d|--dir*|-d)
+        dir* | d | --dir* | -d)
             _bd_sundry ${@}
             ;;
-        env*|e|--env|-e)
+        env* | e | --env | -e)
             _bd_sundry ${@}
             ;;
-        functions|--functions)
+        functions | --functions)
             # functions argument (don't do anything)
             return 0
             ;;
-        help|h|--help|-h)
+        help | h | --help | -h)
             _bd_help
             ;;
-        license|--license)
+        license | --license)
             _bd_license
             ;;
-        upgrade|--upgrade)
+        upgrade | --upgrade)
             _bd_upgrade "${BD_DIR}"
             ;;
-        ver*|v|--ver*|-v)
+        ver* | v | --ver* | -v)
             _bd_sundry version
             ;;
         *)
@@ -622,7 +621,7 @@ _bd_main() {
         # calculate run times
         local bd_end_time bd_total_time bd_total_time_ms
         bd_end_time=$(_bd_uptime 2> /dev/null)
-        [[ "${bd_begin_time}" =~ ^[0-9]+$ ]] && [[ "${bd_end_time}" =~ ^[0-9]+$ ]] && bd_total_time=$((${bd_end_time}-${bd_begin_time}))
+        [[ ${bd_begin_time} =~ ^[0-9]+$ ]] && [[ ${bd_end_time} =~ ^[0-9]+$ ]] && bd_total_time=$((bd_end_time - bd_begin_time))
         bd_total_time_ms="$(_bd_debug_ms ${bd_total_time} 2> /dev/null)"
     fi
 
@@ -667,7 +666,7 @@ _bd_namespace_init() {
 
     # preferred order of sources for BD_USER
     [ ${#BD_USER} -eq 0 ] && [ "${USER}" == 'root' ] && type -P logname &> /dev/null && BD_USER=$(logname 2> /dev/null) # hack; only use logname for root?
-    [ ${#BD_USER} -eq 0 ] && [ ${#USER} -gt 0 ] && BD_USER=${USER} # default to ${USER}
+    [ ${#BD_USER} -eq 0 ] && [ ${#USER} -gt 0 ] && BD_USER=${USER}                                                      # default to ${USER}
     [ ${#BD_USER} -eq 0 ] && [ ${#USERNAME} -gt 0 ] && BD_USER=${USERNAME}
     [ ${#BD_USER} -eq 0 ] && type -P who &> /dev/null && BD_USER=$(who -m 2> /dev/null)
     [ ${#BD_USER} -eq 0 ] && [ ${#SUDO_USER} -gt 0 ] && BD_USER=${SUDO_USER}
@@ -723,15 +722,15 @@ _bd_namespace_reset() {
     IFS=$'\n'
     for bd_declare in $(declare -g 2> /dev/null); do
         # function names
-        if [[ "${bd_declare}" == '_bd_'*' () ' ]]; then
+        if [[ ${bd_declare} == '_bd_'*' () ' ]]; then
             bd_function_name="${bd_declare%% *}"
         fi
 
         # variable names
-        if [[ "${bd_declare}" == 'BD_'*'='* ]]; then
+        if [[ ${bd_declare} == 'BD_'*'='* ]]; then
             bd_variable_name="${bd_declare%%=*}"
 
-            [[ "${bd_variable_name}" == 'BD_'*'_SOURCED'* ]] && bd_variable_names+=("${bd_variable_name}")
+            [[ ${bd_variable_name} == 'BD_'*'_SOURCED'* ]] && bd_variable_names+=("${bd_variable_name}")
         fi
     done
     IFS="${bd_unset_oifs}"
@@ -751,7 +750,7 @@ _bd_namespace_reset() {
         IFS=$'\n'
         for bd_declare in $(declare -g 2> /dev/null); do
             # this loop resets virtually all BD_* variables that are not excluded (preserved)
-            if [[ "${bd_declare}" == 'BD_'*'='* ]]; then
+            if [[ ${bd_declare} == 'BD_'*'='* ]]; then
                 bd_variable_name="${bd_declare%%=*}"
 
                 # exclude privates
@@ -769,7 +768,7 @@ _bd_namespace_reset() {
                 [ "${bd_variable_name}" == 'BD_USER' ] && continue
                 [ "${bd_variable_name}" == 'BD_VERSION' ] && continue
 
-                [[ "${bd_variable_name}" == 'BD_'*'_EXPORT' ]] && continue
+                [[ ${bd_variable_name} == 'BD_'*'_EXPORT' ]] && continue
 
                 if [ "${bd_variable_name}" == 'BD_AUTOLOADER_DIRS' ]; then
                     if ! _bd_true ${BD_LEARN}; then
@@ -844,13 +843,13 @@ _bd_os() {
         fi
 
         case "${BD_OS_KERNEL_NAME}" in
-            bsd*)                           BD_OS='bsd';;
-            darwin*)                        BD_OS='darwin';;
-            linux*)                         BD_OS='linux';;
-            solaris*)                       BD_OS='solaris';;
-            cygwin*|mingw*|win*)            BD_OS='windows';;
-            linux*microsoft*)               BD_OS='wsl';;
-            *)                              BD_OS="unknown:${BD_OS_KERNEL_NAME}"
+            bsd*) BD_OS='bsd' ;;
+            darwin*) BD_OS='darwin' ;;
+            linux*) BD_OS='linux' ;;
+            solaris*) BD_OS='solaris' ;;
+            cygwin* | mingw* | win*) BD_OS='windows' ;;
+            linux*microsoft*) BD_OS='wsl' ;;
+            *) BD_OS="unknown:${BD_OS_KERNEL_NAME}" ;;
         esac
 
         unset -v BD_OS_KERNEL_NAME
@@ -882,7 +881,6 @@ _bd_private() {
         [ "${1}" == "${bd_private_variable_name}" ] && return 0
     done
 
-
     return 1
 }
 export -f _bd_private
@@ -904,14 +902,18 @@ _bd_realpath() {
 
         if [ -r "${bd_realpath_arg}" ]; then
             if [ -d "${bd_realpath_arg}" ]; then
-                bd_realpath_name="$(cd "${bd_realpath_arg}" &> /dev/null; pwd -P)"
+                bd_realpath_name="$(
+                    cd "${bd_realpath_arg}" &> /dev/null
+                    pwd -P
+                )"
             else
                 bd_realpath_dirname="${bd_realpath_arg%/*}"
                 if [ -d "${bd_realpath_dirname}" ]; then
-                    >&2 echo "bd_realpath_dirname=${bd_realpath_dirname}"
-
                     bd_realpath_basename="${bd_realpath_arg##*/}"
-                    bd_realpath_name="$(cd "${bd_realpath_dirname}" &> /dev/null; pwd -P)"
+                    bd_realpath_name="$(
+                        cd "${bd_realpath_dirname}" &> /dev/null
+                        pwd -P
+                    )"
                     [ ${#bd_realpath_basename} -gt 0 ] && bd_realpath_name+="/${bd_realpath_basename}"
                 fi
             fi
@@ -942,16 +944,16 @@ _bd_uptime() {
 
     local bd_uptime_ms bd_uptime_t1
     if [ ${BASH_VERSINFO[0]} -ge 5 ]; then
-        bd_uptime_t1=${EPOCHREALTIME//.}
-        bd_uptime_ms=$((${bd_uptime_t1}/1000))
+        bd_uptime_t1=${EPOCHREALTIME//./}
+        bd_uptime_ms=$((bd_uptime_t1 / 1000))
     else
         local bd_uptime_t0
         if [ "${BD_OS}" == 'linux' ] || [ "${BD_OS}" == 'windows' ] || [ "${BD_OS}" == 'wsl' ]; then
             local bd_uptime_idle
             # linux & windows; use /proc/uptime
             read bd_uptime_t0 bd_uptime_idle < /proc/uptime
-            bd_uptime_t1="${bd_uptime_t0//.}"
-            bd_uptime_ms=$((${bd_uptime_t1}*10))
+            bd_uptime_t1="${bd_uptime_t0//./}"
+            bd_uptime_ms=$((bd_uptime_t1 * 10))
         fi
 
         if [ "${BD_OS}" == 'darwin' ]; then
@@ -959,7 +961,7 @@ _bd_uptime() {
             bd_uptime_t0="$(command -p sysctl -n kern.boottime 2> /dev/null)"
             bd_uptime_t1="${bd_uptime_t0%,*}"
             bd_uptime_t1="${bd_uptime_t1##* }"
-            bd_uptime_ms=$((($(command -p date +%s)-${bd_uptime_t1})*1000))
+            bd_uptime_ms=$((($(command -p date +%s) - bd_uptime_t1) * 1000))
         fi
     fi
 
