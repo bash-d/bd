@@ -3,7 +3,7 @@
 # MIT License
 # ===========
 #
-# Copyright (C) 2018-2024 Joseph Tingiris <joseph.tingiris@gmail.com>
+# Copyright (C) 2018-2026 Joseph Tingiris <joseph.tingiris@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -146,7 +146,6 @@ fi
 echo "# [OK] ... '${BD_DIR}' directory found"
 echo
 
-
 if [ "${BD_INSTALL_EXISTS}" == "1" ]; then
     BD_INSTALL_PWD="${PWD}"
     cd "${BD_DIR}"
@@ -242,7 +241,7 @@ if [ "${BD_INSTALL_APPEND}" == "1" ]; then
 
     # append ~/.bashrc
     if [ -f ~/.bashrc ]; then
-	BD_INSTALL_APPEND_BASHRC="$(grep -E -e '(.|source) (.*)/bd.sh( |$|")' ~/.bashrc 2> /dev/null)"
+        BD_INSTALL_APPEND_BASHRC="$(grep -E -e '(.|source) (.*)/bd.sh( |$|")' ~/.bashrc 2> /dev/null)"
         if [ ${#BD_INSTALL_APPEND_BASHRC} -gt 0 ]; then
             echo "# [OK] ... '~/.bashrc' sources 'bd.sh'"
         else
