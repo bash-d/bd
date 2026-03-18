@@ -3,7 +3,7 @@
 # MIT License
 # ===========
 #
-# Copyright (C) 2018-2024 Joseph Tingiris <joseph.tingiris@gmail.com>
+# Copyright (C) 2018-2026 Joseph Tingiris <joseph.tingiris@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -60,7 +60,7 @@ if [ "${BD_OS}" == 'linux' ]; then
     if [ ${#BD_OS_ID} -eq 0 ] && [ -r /etc/os-release ]; then
         OIFS="${IFS}"
         while IFS='=' read -r BD_OS_RELEASE_KEY BD_OS_RELEASE_VALUE; do
-            BD_OS_RELEASE_VALUE=${BD_OS_RELEASE_VALUE//\"}
+            BD_OS_RELEASE_VALUE=${BD_OS_RELEASE_VALUE//\"/}
             if [ "${BD_OS_RELEASE_KEY}" == 'ID' ]; then
                 BD_OS_ID="${BD_OS_RELEASE_VALUE}"
             fi

@@ -3,7 +3,7 @@
 # MIT License
 # ===========
 #
-# Copyright (C) 2018-2024 Joseph Tingiris <joseph.tingiris@gmail.com>
+# Copyright (C) 2018-2026 Joseph Tingiris <joseph.tingiris@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -66,6 +66,8 @@ _bd_upgrade() {
             unset -v bd_upgrade_pwd
         fi
     else
-        echo; echo 'git not found'; echo
+        echo
+        echo 'git not found'
+        echo
     fi
 }

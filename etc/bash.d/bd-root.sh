@@ -3,7 +3,7 @@
 # MIT License
 # ===========
 #
-# Copyright (C) 2018-2024 Joseph Tingiris <joseph.tingiris@gmail.com>
+# Copyright (C) 2018-2026 Joseph Tingiris <joseph.tingiris@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -63,7 +63,7 @@ if [ "${USER}" != "root" ]; then
                 export BD_ROOT_SUDO_MUST_PRESERVE_ENV="BD_HOME,BD_USER"
                 [ "${BD_CLIPBOARD}" != "" ] && BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",BD_CLIPBOARD"
                 [ "${BD_ROOT_SUDO_PRESERVE_ENV}" != "" ] && BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",${BD_ROOT_SUDO_PRESERVE_ENV}"
-                [[ "${BD_ROOT_SUDO_MUST_PRESERVE_ENV}" != *",SSH_AUTH_SOCK"* ]] && [ "${SSH_AUTH_SOCK}" != "" ] && BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",SSH_AUTH_SOCK"
+                [[ ${BD_ROOT_SUDO_MUST_PRESERVE_ENV} != *",SSH_AUTH_SOCK"* ]] && [ "${SSH_AUTH_SOCK}" != "" ] && BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",SSH_AUTH_SOCK"
 
                 BD_ROOT_SUDO_MUST_PRESERVE_ENV="${BD_ROOT_SUDO_MUST_PRESERVE_ENV//,,/,}"
 

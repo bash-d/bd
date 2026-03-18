@@ -3,7 +3,7 @@
 # MIT License
 # ===========
 #
-# Copyright (C) 2018-2024 Joseph Tingiris <joseph.tingiris@gmail.com>
+# Copyright (C) 2018-2026 Joseph Tingiris <joseph.tingiris@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -43,15 +43,15 @@ fi
 _bd_sundry() {
     _bd_debug "${FUNCNAME} ${@}" 55
 
-    if [[ "${1}" == "dir"* ]] || [ "${1}" == "autoloader_dirs" ]; then
+    if [[ ${1} == "dir"* ]] || [ "${1}" == "autoloader_dirs" ]; then
         _bd_autoloader_dirs ${@}
     fi
 
-    if [[ "${1}" == "env"* ]]; then
+    if [[ ${1} == "env"* ]]; then
         _bd_environment ${@}
     fi
 
-    if [[ "${1}" == "vers"* ]]; then
+    if [[ ${1} == "vers"* ]]; then
         echo "${BD_VERSION}"
     fi
 }
@@ -106,7 +106,7 @@ _bd_environment() {
 
     IFS=$'\n'
     for bd_declare in $(declare -g 2> /dev/null); do
-        if [[ "${bd_declare}" == 'BD_'*'='* ]]; then
+        if [[ ${bd_declare} == 'BD_'*'='* ]]; then
             bd_variable_name="${bd_declare%%=*}"
 
             # don't show these

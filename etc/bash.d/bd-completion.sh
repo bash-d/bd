@@ -3,7 +3,7 @@
 # MIT License
 # ===========
 #
-# Copyright (C) 2018-2024 Joseph Tingiris <joseph.tingiris@gmail.com>
+# Copyright (C) 2018-2026 Joseph Tingiris <joseph.tingiris@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -59,12 +59,12 @@ _bd_completion() {
         fi
 
         case "${_bd_completion_option}" in
-            bits|b|--bits|-b)
+            bits | b | --bits | -b)
                 #echo _bd_completion_option=$_bd_completion_option _bd_completion_action=$_bd_completion_action, _bd_completion_word=$_bd_completion_word, 3=${COMP_WORDS[3]}
 
                 if [ "${_bd_completion_action}" == "" ]; then
                     _bd_completion_words="get hash ls rm"
-                    COMPREPLY=($( compgen -W "${_bd_completion_words}" -- ${_bd_completion_word} ))
+                    COMPREPLY=($(compgen -W "${_bd_completion_words}" -- ${_bd_completion_word}))
                     return
                 fi
 
@@ -74,28 +74,25 @@ _bd_completion() {
                     return
                 fi
                 ;;
-            dir*|d|--dir*|-d)
+            dir* | d | --dir* | -d)
                 if [ "${_bd_completion_action}" == "" ]; then
                     _bd_completion_words="hash ls"
-                    COMPREPLY=($( compgen -W "${_bd_completion_words}" -- ${_bd_completion_word} ))
+                    COMPREPLY=($(compgen -W "${_bd_completion_words}" -- ${_bd_completion_word}))
                     return
                 fi
                 ;;
-            env*|e|--env|-e)
+            env* | e | --env | -e)
                 if [ "${_bd_completion_action}" == "" ]; then
                     _bd_completion_words="$(bd env | cut -d' ' -f1)"
-                    COMPREPLY=($( compgen -W "${_bd_completion_words}" -- ${_bd_completion_word} ))
+                    COMPREPLY=($(compgen -W "${_bd_completion_words}" -- ${_bd_completion_word}))
                     return
                 fi
                 ;;
-            functions|--functions)
-                ;;
-            help|h|--help|-h)
-                ;;
-            license|--license)
-                ;;
+            functions | --functions) ;;
+            help | h | --help | -h) ;;
+            license | --license) ;;
             "")
-                COMPREPLY=($( compgen -W "${_bd_completion_words}" -- ${_bd_completion_word} ))
+                COMPREPLY=($(compgen -W "${_bd_completion_words}" -- ${_bd_completion_word}))
                 ;;
             *)
                 COMPREPLY=()

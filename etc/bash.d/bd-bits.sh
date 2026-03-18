@@ -3,7 +3,7 @@
 # MIT License
 # ===========
 #
-# Copyright (C) 2018-2024 Joseph Tingiris <joseph.tingiris@gmail.com>
+# Copyright (C) 2018-2026 Joseph Tingiris <joseph.tingiris@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,6 @@ fi
 
 #
 # main
-
 
 # bits option
 _bd_bits() {
@@ -101,7 +100,6 @@ _bd_bits_get() {
     local bd_bits_get_from="${3}"
     local bd_bits_get_to="${4}"
 
-
     #bd_realpath_dirname="${bd_realpath_arg%/*}"
 
     local bd_bits_get_basename="${bd_bits_get_from##*/}"
@@ -109,11 +107,11 @@ _bd_bits_get() {
     bd_bits_get_basename="${bd_bits_get_basename%\&*}" # no url parameters, e.g. github private links
 
     if [ -z "${bd_bits_get_to}" ]; then
-        bd_bits_get_to="${bd_bits_get_basename:(-3)}"
+        bd_bits_get_to="${bd_bits_get_basename: -3}"
         if [ "${bd_bits_get_to}" == ".sh" ]; then
             bd_bits_get_to="${bd_bits_get_basename}"
         else
-            bd_bits_get_to="${bd_bits_get_basename:(-5)}"
+            bd_bits_get_to="${bd_bits_get_basename: -5}"
             if [ "${bd_bits_get_to}" == ".bash" ]; then
                 bd_bits_get_to="${bd_bits_get_basename}"
             else
