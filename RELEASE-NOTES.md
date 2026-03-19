@@ -1,5 +1,5 @@
 # 0.46.2.2
-- bd.sh: fixed repeated autoloading of $HOME
+- bd.sh: added new $__BD_PWD lock and previous $HOME logic
 
 # 0.46.2.1
 - bd.sh: fixed repeated autoloading of $HOME
