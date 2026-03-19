@@ -1,3 +1,6 @@
+# 0.46.2.3
+- bd.sh: added _bd_init()
+
 # 0.46.2.2
 - bd.sh: added new $__BD_PWD lock and previous $HOME logic
 

@@ -27,6 +27,8 @@
 #
 # https://github.com/bash-d/bd/blob/main/LICENSE.md
 
+BD_VERSION=0.46.2.3
+
 #
 # init
 #
@@ -42,10 +44,7 @@ if [ "${BASH_SOURCE}" == '' ]; then
     return 1 &> /dev/null
 fi
 
-export BD_VERSION=0.46.2.2
-
-[ "${_BD_PWD}" ] && return
-export _BD_PWD="${PWD}"
+export BD_VERSION
 
 #
 # functions
@@ -378,6 +377,36 @@ _bd_help() {
     printf "${bd_help}"
 }
 
+# initialize the bd environment (for .bash_profile and .bashrc)
+_bd_init() {
+    _bd_debug "${FUNCNAME}(${@})" 55
+
+    local _bash_source _bash_source_basename _bd_variable_name _bd_value
+
+    for _bash_source in "${BASH_SOURCE[@]}"; do
+        _bd_debug "_bash_source = ${_bash_source}" 20
+
+        _bash_source_basename="${_bash_source##*/}"
+        _bd_debug "_bash_source_basename = ${_bash_source_basename}" 22
+
+        if [ "${_bash_source_basename}" == ".bash_profile" ] || [ "${_bash_source_basename}" == ".bashrc" ]; then
+            # reset environment for interactive or login shells
+            _bd_debug "reset environment; sourced by = ${_bash_source}" 5
+
+            while IFS='=' read -r _bd_variable_name _bd_variable_value; do
+                [ "${_bd_variable_name}" == "" ] && continue
+                if [[ ${_bd_variable_name} == '_BD'* ]] || [[ ${_bd_variable_name} == '_bd'* ]]; then
+                    _bd_debug "unset -v ${_bd_variable_name}" 15
+                    unset -v ${_bd_variable_name}
+                fi
+            done < <(env)
+            unset -v _bd_variable_name _bd_variable_value
+
+            break
+        fi
+    done
+}
+
 # load all config files & directories
 _bd_load_config() {
     local bd_load_config_dir_name
@@ -568,6 +597,8 @@ _bd_main() {
 
     local bd_main_option=1
 
+    _bd_init
+
     case "${1}" in
         bits | b | --bits | -b)
             _bd_bits ${@}
@@ -595,11 +626,16 @@ _bd_main() {
             _bd_sundry version
             ;;
         *)
+            # prevent excessive sourcing (e.g. from config files)
+            [ "${_BD_PWD}" ] && return
+
             bd_main_option=0
 
             _bd_debug "${BD_SOURCE} ${1} pass; invoke autoloader" 10
 
             _bd_autoloader ${@}
+
+            export _BD_PWD="${PWD}"
             ;;
     esac
 
@@ -796,6 +832,7 @@ _bd_namespace_reset() {
         bd_function_names+=(_bd_autoloader_execute_array)
         bd_function_names+=(_bd_bootstrap)
         bd_function_names+=(_bd_caller)
+        bd_function_names+=(_bd_init)
         bd_function_names+=(_bd_load_config)
         bd_function_names+=(_bd_load_config_dir)
         bd_function_names+=(_bd_load_config_file)
@@ -818,17 +855,19 @@ _bd_namespace_reset() {
 
     # unset function names
     for bd_function_name in ${bd_function_names[@]}; do
-        unset -f "${bd_function_name}" && _bd_debug "unset -f ${bd_function_name}" 15
+        _bd_debug "unset -f ${bd_function_name}" 15
+        unset -f "${bd_function_name}"
     done
 
     # unset variabe names
     for bd_variable_name in ${bd_variable_names[@]}; do
-        unset -v ${bd_variable_name} && _bd_debug "unset -v ${bd_variable_name}" 15
+        _bd_debug "unset -v ${bd_variable_name}" 15
+        unset -v ${bd_variable_name}
     done
 
     if [ "${1}" != 'init' ]; then
         # functions used locally (& self)
-        unset -f _bd_true _bd_namespace_init _bd_namespace_reset
+        unset -f _bd_init _bd_namespace_init _bd_namespace_reset _bd_true
     fi
 }
 export -f _bd_namespace_reset
