@@ -42,7 +42,10 @@ if [ "${BASH_SOURCE}" == '' ]; then
     return 1 &> /dev/null
 fi
 
-export BD_VERSION=0.46.2.1
+export BD_VERSION=0.46.2.2
+
+[ "${_BD_PWD}" ] && return
+export _BD_PWD="${PWD}"
 
 #
 # functions
@@ -56,7 +59,7 @@ export -f autoload
 
 # primary functional interfce for this script
 bd() {
-    [ -r "${BD_SOURCE}" ] && . "${BD_SOURCE}" ${@}
+    [ -r "${BD_SOURCE}" ] && unset -v _BD_PWD && . "${BD_SOURCE}" ${@}
 }
 export -f bd
 
@@ -377,14 +380,7 @@ _bd_help() {
 
 # load all config files & directories
 _bd_load_config() {
-    local bd_load_config_dir_name bd_pwd
-
-    bd_pwd="${PWD}"
-
-    if [ ! -d "${PWD}/${BD_SUB_DIR}" ]; then
-        _bd_debug "'${PWD}/${BD_SUB_DIR}' directory not found" 15
-        cd
-    fi
+    local bd_load_config_dir_name
 
     # ${BD_BITS_DIR}
     if [ ${#BD_BITS_DIR} -gt 0 ]; then
@@ -420,30 +416,40 @@ _bd_load_config() {
         fi
     fi
 
+    # ${HOME}
+    if [ ${#HOME} -gt 0 ] && [ "${HOME}" != "/" ]; then
+        [ -f "${HOME}/${BD_CONFIG_FILE}" ] && [ -r "${HOME}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${HOME}/${BD_CONFIG_FILE}" ${1}
+
+        if [ "${1}" != 'preload' ] && [ -d "${HOME}/${BD_SUB_DIR}" ] && [ -r "${HOME}/${BD_SUB_DIR}" ]; then
+            _bd_autoloader_dir "${HOME}/${BD_SUB_DIR}"
+
+            # sub-directories
+            for bd_load_config_dir_name in "${HOME}/${BD_SUB_DIR}"/*; do
+                [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoloader_dir "${bd_load_config_dir_name}"
+            done
+
+            _bd_load_config_dir "${HOME}"
+        fi
+    fi
+
     # ${BD_HOME}
     if [ ${#BD_HOME} -gt 0 ] && [ "${BD_HOME}" != "/" ] && [ "${BD_HOME}" != "${HOME}" ]; then
-        if [ "${PWD}" == "${HOME}" ] && [ "${HOME}" != "${BD_HOME}" ]; then
-            [ -f "${BD_HOME}/${BD_CONFIG_FILE}" ] && [ -r "${BD_HOME}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${BD_HOME}/${BD_CONFIG_FILE}" ${1}
+        [ -f "${BD_HOME}/${BD_CONFIG_FILE}" ] && [ -r "${BD_HOME}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${BD_HOME}/${BD_CONFIG_FILE}" ${1}
 
-            if [ "${1}" != 'preload' ] && [ -d "${BD_HOME}/${BD_SUB_DIR}" ] && [ -r "${BD_HOME}/${BD_SUB_DIR}" ]; then
-                _bd_debug "processing alternate BD_HOME ${BD_HOME} because PWD is HOME (${HOME})" 12
+        if [ "${1}" != 'preload' ] && [ -d "${BD_HOME}/${BD_SUB_DIR}" ] && [ -r "${BD_HOME}/${BD_SUB_DIR}" ]; then
+            _bd_autoloader_dir "${BD_HOME}/${BD_SUB_DIR}"
 
-                _bd_autoloader_dir "${BD_HOME}/${BD_SUB_DIR}"
+            # sub-directories
+            for bd_load_config_dir_name in "${BD_HOME}/${BD_SUB_DIR}"/*; do
+                [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoloader_dir "${bd_load_config_dir_name}"
+            done
 
-                # sub-directories
-                for bd_load_config_dir_name in "${BD_HOME}/${BD_SUB_DIR}"/*; do
-                    [ -d "${bd_load_config_dir_name}" ] && [ -r "${bd_load_config_dir_name}" ] && _bd_autoloader_dir "${bd_load_config_dir_name}"
-                done
-
-                _bd_load_config_dir "${BD_HOME}"
-            fi
-        else
-            _bd_debug "skipping BD_HOME ${BD_HOME} because PWD is not HOME" 22
+            _bd_load_config_dir "${BD_HOME}"
         fi
     fi
 
     # ${PWD}
-    if [ ${#PWD} -gt 0 ] && [ "${PWD}" != "/etc" ]; then
+    if [ ${#PWD} -gt 0 ] && [ "${PWD}" != "/etc" ] && [ "${PWD}" != "${BD_HOME}" ] && [ "${PWD}" != "${HOME}" ]; then
         [ -f "${PWD}/${BD_CONFIG_FILE}" ] && [ -r "${PWD}/${BD_CONFIG_FILE}" ] && _bd_load_config_file "${PWD}/${BD_CONFIG_FILE}" ${1}
 
         if [ "${1}" != 'preload' ] && [ -d "${PWD}/${BD_SUB_DIR}" ] && [ -r "${PWD}/${BD_SUB_DIR}" ]; then
@@ -457,8 +463,6 @@ _bd_load_config() {
             _bd_load_config_dir "${PWD}"
         fi
     fi
-
-    cd "${bd_pwd}" 2> /dev/null || return 1
 
     unset -v bd_load_config_dir_name
 }

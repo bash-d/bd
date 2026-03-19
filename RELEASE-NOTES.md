@@ -1,3 +1,6 @@
+# 0.46.2.2
+- bd.sh: fixed repeated autoloading of $HOME
+
 # 0.46.2.1
 - bd.sh: fixed repeated autoloading of $HOME
 
