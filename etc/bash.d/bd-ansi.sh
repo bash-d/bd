@@ -65,159 +65,159 @@ _bd_ansi() {
     # https://en.wikipedia.org/wiki/ANSI_escape_code
 
     local bd_ansi_reset_all
-    bd_ansi_reset_all='\e[0m' # reset all attributes
+    bd_ansi_reset_all='\033[0m' # reset all attributes
 
     case ${bd_ansi} in
-        bold) echo -ne '\e[1m' ;;
-        dim) echo -ne '\e[2m' ;;
-        italic | italics) echo -ne '\e[3m' ;;
-        underline) echo -ne '\e[4m' ;;
-        blink) echo -ne '\e[5m' ;;
-        blink_slow) echo -ne '\e[5m' ;;
-        blink_fast) echo -ne '\e[6m' ;;
-        reverse) echo -ne '\e[7m' ;;
-        hidden) echo -ne '\e[8m' ;;
+        bold) echo -ne '\033[1m' ;;
+        dim) echo -ne '\033[2m' ;;
+        italic | italics) echo -ne '\033[3m' ;;
+        underline) echo -ne '\033[4m' ;;
+        blink) echo -ne '\033[5m' ;;
+        blink_slow) echo -ne '\033[5m' ;;
+        blink_fast) echo -ne '\033[6m' ;;
+        reverse) echo -ne '\033[7m' ;;
+        hidden) echo -ne '\033[8m' ;;
 
         reset) echo -ne "${bd_ansi_reset_all}" ;;
         reset_all) echo -ne "${bd_ansi_reset_all}" ;;
-        reset_bold) echo -ne '\e[21m' ;;
-        reset_dim) echo -ne '\e[22m' ;;
-        reset_italic | reset_italics) echo -ne '\e[23m' ;;
-        reset_underline) echo -ne '\e[24m' ;;
-        reset_blink) echo -ne '\e[25m' ;;
-        reset_reverse) echo -ne '\e[27m' ;;
-        reset_hidden) echo -ne '\e[28m' ;;
+        reset_bold) echo -ne '\033[21m' ;;
+        reset_dim) echo -ne '\033[22m' ;;
+        reset_italic | reset_italics) echo -ne '\033[23m' ;;
+        reset_underline) echo -ne '\033[24m' ;;
+        reset_blink) echo -ne '\033[25m' ;;
+        reset_reverse) echo -ne '\033[27m' ;;
+        reset_hidden) echo -ne '\033[28m' ;;
 
-        fg_default) echo -ne '\e[39m' ;;
-        bg_default) echo -ne '\e[49m' ;;
+        fg_default) echo -ne '\033[39m' ;;
+        bg_default) echo -ne '\033[49m' ;;
 
         # colors 1 and 2 always use the sgr pallet
 
         # black names are low intensity to high intensity
 
         # standard 0 (black)
-        fg_black1 | fg_black | black) echo -ne '\e[30m' ;; # FG Black
-        fg_black2 | fg_bright_black) echo -ne '\e[90m' ;;  # FG Bright Black (Gray)
+        fg_black1 | fg_black | black) echo -ne '\033[30m' ;; # FG Black
+        fg_black2 | fg_bright_black) echo -ne '\033[90m' ;;  # FG Bright Black (Gray)
 
-        bg_black1 | bg_black) echo -ne '\e[40m' ;;         # BG Black
-        bg_black2 | bg_bright_black) echo -ne '\e[100m' ;; # BG Bright Black (Gray)
+        bg_black1 | bg_black) echo -ne '\033[40m' ;;         # BG Black
+        bg_black2 | bg_bright_black) echo -ne '\033[100m' ;; # BG Bright Black (Gray)
 
         # all other color names are high intensity to low intensity; colors greather than 2 use the 256 pallet
 
         # standard 1 (red)
-        fg_red1 | fg_bright_red | bright_red) echo -ne '\e[91m' ;; # FG Bright Red
-        fg_red2 | fg_red | red) echo -ne '\e[31m' ;;               # FG Red
-        fg_red3) echo -ne '\e[38;5;124m' ;;
-        fg_red4) echo -ne '\e[38;5;88m' ;;
-        fg_red5) echo -ne '\e[38;5;52m' ;;
+        fg_red1 | fg_bright_red | bright_red) echo -ne '\033[91m' ;; # FG Bright Red
+        fg_red2 | fg_red | red) echo -ne '\033[31m' ;;               # FG Red
+        fg_red3) echo -ne '\033[38;5;124m' ;;
+        fg_red4) echo -ne '\033[38;5;88m' ;;
+        fg_red5) echo -ne '\033[38;5;52m' ;;
 
-        bg_red1 | bg_bright_red) echo -ne '\e[101m' ;; # BG Bright Red
-        bg_red2 | bg_red) echo -ne '\e[41m' ;;         # BG Red
-        bg_red3) echo -ne '\e[48;5;124m' ;;
-        bg_red4) echo -ne '\e[48;5;88m' ;;
-        bg_red5) echo -ne '\e[48;5;52m' ;;
+        bg_red1 | bg_bright_red) echo -ne '\033[101m' ;; # BG Bright Red
+        bg_red2 | bg_red) echo -ne '\033[41m' ;;         # BG Red
+        bg_red3) echo -ne '\033[48;5;124m' ;;
+        bg_red4) echo -ne '\033[48;5;88m' ;;
+        bg_red5) echo -ne '\033[48;5;52m' ;;
 
         # standard 2 (green)
-        fg_green1 | fg_bright_green | bright_green) echo -ne '\e[92m' ;; # FG Bright Green
-        fg_green2 | fg_green | green) echo -ne '\e[32m' ;;               # FG Green
-        fg_green3) echo -ne '\e[38;5;28m' ;;
-        fg_green4) echo -ne '\e[38;5;22m' ;;
-        fg_green5) echo -ne '\e[38;5;58m' ;;
+        fg_green1 | fg_bright_green | bright_green) echo -ne '\033[92m' ;; # FG Bright Green
+        fg_green2 | fg_green | green) echo -ne '\033[32m' ;;               # FG Green
+        fg_green3) echo -ne '\033[38;5;28m' ;;
+        fg_green4) echo -ne '\033[38;5;22m' ;;
+        fg_green5) echo -ne '\033[38;5;58m' ;;
 
-        bg_green1 | bg_bright_green) echo -ne '\e[102m' ;; # BG Bright Green
-        bg_green2 | bg_green) echo -ne '\e[42m' ;;         # BG Green
-        bg_green3) echo -ne '\e[48;5;28m' ;;
-        bg_green4) echo -ne '\e[48;5;22m' ;;
-        bg_green5) echo -ne '\e[48;5;58m' ;;
+        bg_green1 | bg_bright_green) echo -ne '\033[102m' ;; # BG Bright Green
+        bg_green2 | bg_green) echo -ne '\033[42m' ;;         # BG Green
+        bg_green3) echo -ne '\033[48;5;28m' ;;
+        bg_green4) echo -ne '\033[48;5;22m' ;;
+        bg_green5) echo -ne '\033[48;5;58m' ;;
 
         # standard 3 (yellow)
-        fg_yellow1 | fg_bright_yellow | bright_yellow) echo -ne '\e[93m' ;;
-        fg_yellow2 | fg_yellow | yellow) echo -ne '\e[33m' ;;
-        fg_yellow3) echo -ne '\e[38;5;178m' ;;
-        fg_yellow4) echo -ne '\e[38;5;172m' ;;
-        fg_yellow5) echo -ne '\e[38;5;136m' ;;
+        fg_yellow1 | fg_bright_yellow | bright_yellow) echo -ne '\033[93m' ;;
+        fg_yellow2 | fg_yellow | yellow) echo -ne '\033[33m' ;;
+        fg_yellow3) echo -ne '\033[38;5;178m' ;;
+        fg_yellow4) echo -ne '\033[38;5;172m' ;;
+        fg_yellow5) echo -ne '\033[38;5;136m' ;;
 
-        bg_yellow1 | bg_bright_yellow) echo -ne '\e[103m' ;;
-        bg_yellow2 | bg_yellow) echo -ne '\e[43m' ;;
-        bg_yellow3) echo -ne '\e[48;5;178m' ;;
-        bg_yellow4) echo -ne '\e[48;5;172m' ;;
-        bg_yellow5) echo -ne '\e[48;5;136m' ;;
+        bg_yellow1 | bg_bright_yellow) echo -ne '\033[103m' ;;
+        bg_yellow2 | bg_yellow) echo -ne '\033[43m' ;;
+        bg_yellow3) echo -ne '\033[48;5;178m' ;;
+        bg_yellow4) echo -ne '\033[48;5;172m' ;;
+        bg_yellow5) echo -ne '\033[48;5;136m' ;;
 
         # standard 4 (blue)
-        fg_blue1 | fg_bright_blue | bright_blue) echo -ne '\e[94m' ;;
-        fg_blue2 | fg_blue | blue) echo -ne '\e[34m' ;;
-        fg_blue3) echo -ne '\e[38;5;20m' ;;
-        fg_blue4) echo -ne '\e[38;5;19m' ;;
-        fg_blue5) echo -ne '\e[38;5;18m' ;;
+        fg_blue1 | fg_bright_blue | bright_blue) echo -ne '\033[94m' ;;
+        fg_blue2 | fg_blue | blue) echo -ne '\033[34m' ;;
+        fg_blue3) echo -ne '\033[38;5;20m' ;;
+        fg_blue4) echo -ne '\033[38;5;19m' ;;
+        fg_blue5) echo -ne '\033[38;5;18m' ;;
 
-        bg_blue1 | bg_bright_blue) echo -ne '\e[104m' ;;
-        bg_blue2 | bg_blue) echo -ne '\e[44m' ;;
-        bg_blue3) echo -ne '\e[48;5;20m' ;;
-        bg_blue4) echo -ne '\e[48;5;19m' ;;
-        bg_blue5) echo -ne '\e[48;5;18m' ;;
+        bg_blue1 | bg_bright_blue) echo -ne '\033[104m' ;;
+        bg_blue2 | bg_blue) echo -ne '\033[44m' ;;
+        bg_blue3) echo -ne '\033[48;5;20m' ;;
+        bg_blue4) echo -ne '\033[48;5;19m' ;;
+        bg_blue5) echo -ne '\033[48;5;18m' ;;
 
         # standard 5 (magenta)
-        fg_magenta1 | fg_bright_magenta | bright_magenta) echo -ne '\e[95m' ;;
-        fg_magenta2 | fg_magenta | magenta) echo -ne '\e[35m' ;;
-        fg_magenta3) echo -ne '\e[38;5;90m' ;;
-        fg_magenta4) echo -ne '\e[38;5;91m' ;;
-        fg_magenta5) echo -ne '\e[38;5;55m' ;;
+        fg_magenta1 | fg_bright_magenta | bright_magenta) echo -ne '\033[95m' ;;
+        fg_magenta2 | fg_magenta | magenta) echo -ne '\033[35m' ;;
+        fg_magenta3) echo -ne '\033[38;5;90m' ;;
+        fg_magenta4) echo -ne '\033[38;5;91m' ;;
+        fg_magenta5) echo -ne '\033[38;5;55m' ;;
 
-        bg_magenta1 | bg_bright_magenta) echo -ne '\e[105m' ;;
-        bg_magenta2 | bg_magenta) echo -ne '\e[45m' ;;
-        bg_magenta3) echo -ne '\e[48;5;90m' ;;
-        bg_magenta4) echo -ne '\e[48;5;91m' ;;
-        bg_magenta5) echo -ne '\e[48;5;55m' ;;
+        bg_magenta1 | bg_bright_magenta) echo -ne '\033[105m' ;;
+        bg_magenta2 | bg_magenta) echo -ne '\033[45m' ;;
+        bg_magenta3) echo -ne '\033[48;5;90m' ;;
+        bg_magenta4) echo -ne '\033[48;5;91m' ;;
+        bg_magenta5) echo -ne '\033[48;5;55m' ;;
 
         # standard 6 (cyan)
-        fg_cyan1 | fg_bright_cyan | bright_cyan) echo -ne '\e[96m' ;;
-        fg_cyan2 | fg_cyan | cyan) echo -ne '\e[36m' ;;
-        fg_cyan3) echo -ne '\e[38;5;37m' ;;
-        fg_cyan4) echo -ne '\e[38;5;30m' ;;
-        fg_cyan5) echo -ne '\e[38;5;23m' ;;
+        fg_cyan1 | fg_bright_cyan | bright_cyan) echo -ne '\033[96m' ;;
+        fg_cyan2 | fg_cyan | cyan) echo -ne '\033[36m' ;;
+        fg_cyan3) echo -ne '\033[38;5;37m' ;;
+        fg_cyan4) echo -ne '\033[38;5;30m' ;;
+        fg_cyan5) echo -ne '\033[38;5;23m' ;;
 
-        bg_cyan1 | bg_bright_cyan) echo -ne '\e[106m' ;;
-        bg_cyan2 | bg_cyan) echo -ne '\e[46m' ;;
-        bg_cyan3) echo -ne '\e[48;5;37m' ;;
-        bg_cyan4) echo -ne '\e[48;5;30m' ;;
-        bg_cyan5) echo -ne '\e[48;5;23m' ;;
+        bg_cyan1 | bg_bright_cyan) echo -ne '\033[106m' ;;
+        bg_cyan2 | bg_cyan) echo -ne '\033[46m' ;;
+        bg_cyan3) echo -ne '\033[48;5;37m' ;;
+        bg_cyan4) echo -ne '\033[48;5;30m' ;;
+        bg_cyan5) echo -ne '\033[48;5;23m' ;;
 
         # standard 7 (white)
-        fg_white1 | fg_bright_white | bright_white) echo -ne '\e[97m' ;;
-        fg_white2 | fg_white | white) echo -ne '\e[37m' ;;
-        fg_white3) echo -ne '\e[38;5;252m' ;;
-        fg_white4) echo -ne '\e[38;5;251m' ;;
-        fg_white5) echo -ne '\e[38;5;250m' ;;
+        fg_white1 | fg_bright_white | bright_white) echo -ne '\033[97m' ;;
+        fg_white2 | fg_white | white) echo -ne '\033[37m' ;;
+        fg_white3) echo -ne '\033[38;5;252m' ;;
+        fg_white4) echo -ne '\033[38;5;251m' ;;
+        fg_white5) echo -ne '\033[38;5;250m' ;;
 
-        bg_white1 | bg_bright_white) echo -ne '\e[107m' ;;
-        bg_white2 | bg_white) echo -ne '\e[47m' ;;
-        bg_white3) echo -ne '\e[48;5;252m' ;;
-        bg_white4) echo -ne '\e[48;5;251m' ;;
-        bg_white5) echo -ne '\e[48;5;250m' ;;
+        bg_white1 | bg_bright_white) echo -ne '\033[107m' ;;
+        bg_white2 | bg_white) echo -ne '\033[47m' ;;
+        bg_white3) echo -ne '\033[48;5;252m' ;;
+        bg_white4) echo -ne '\033[48;5;251m' ;;
+        bg_white5) echo -ne '\033[48;5;250m' ;;
 
         # standard 8 (gray)
-        fg_gray1 | fg_bright_gray | bright_gray | fg_grey1 | fg_bright_grey | bright_grey) echo -ne '\e[38;5;249m' ;;
-        fg_gray2 | fg_gray | gray | fg_grey2 | fg_grey | grey) echo -ne '\e[38;5;246m' ;;
-        fg_gray3 | fg_grey3) echo -ne '\e[38;5;243m' ;;
-        fg_gray4 | fg_grey4) echo -ne '\e[38;5;240m' ;;
-        fg_gray5 | fg_grey5) echo -ne '\e[38;5;237m' ;;
+        fg_gray1 | fg_bright_gray | bright_gray | fg_grey1 | fg_bright_grey | bright_grey) echo -ne '\033[38;5;249m' ;;
+        fg_gray2 | fg_gray | gray | fg_grey2 | fg_grey | grey) echo -ne '\033[38;5;246m' ;;
+        fg_gray3 | fg_grey3) echo -ne '\033[38;5;243m' ;;
+        fg_gray4 | fg_grey4) echo -ne '\033[38;5;240m' ;;
+        fg_gray5 | fg_grey5) echo -ne '\033[38;5;237m' ;;
 
-        bg_gray1 | bg_gray | bg_grey1 | bg_grey) echo -ne '\e[48;5;249m' ;;
-        bg_gray2 | bg_grey2) echo -ne '\e[48;5;246m' ;;
-        bg_gray3 | bg_grey3) echo -ne '\e[48;5;243m' ;;
-        bg_gray4 | bg_grey4) echo -ne '\e[48;5;240m' ;;
-        bg_gray5 | bg_grey5) echo -ne '\e[48;5;237m' ;;
+        bg_gray1 | bg_gray | bg_grey1 | bg_grey) echo -ne '\033[48;5;249m' ;;
+        bg_gray2 | bg_grey2) echo -ne '\033[48;5;246m' ;;
+        bg_gray3 | bg_grey3) echo -ne '\033[48;5;243m' ;;
+        bg_gray4 | bg_grey4) echo -ne '\033[48;5;240m' ;;
+        bg_gray5 | bg_grey5) echo -ne '\033[48;5;237m' ;;
 
         bg*)
             bd_ansi=${bd_ansi/bg/}
             bd_ansi=${bd_ansi//_/}
-            [[ ${bd_ansi} =~ ^[0-9]+$ ]] && echo -ne "\e[48;5;${bd_ansi}m"
+            [[ ${bd_ansi} =~ ^[0-9]+$ ]] && echo -ne "\033[48;5;${bd_ansi}m"
             ;;
 
         fg*)
             bd_ansi=${bd_ansi/fg/}
             bd_ansi=${bd_ansi//_/}
-            [[ ${bd_ansi} =~ ^[0-9]+$ ]] && echo -ne "\e[38;5;${bd_ansi}m"
+            [[ ${bd_ansi} =~ ^[0-9]+$ ]] && echo -ne "\033[38;5;${bd_ansi}m"
             ;;
 
         *)
@@ -276,7 +276,7 @@ _bd_ansi_chart_16() {
     for bd_ansi_bg in {40..47} {100..107} 49; do
         for bd_ansi_fg in {30..37} {90..97} 39; do
             for bd_ansi_format in 0 1 2 4 5 7; do
-                echo -ne "\e[${bd_ansi_format};${bd_ansi_bg};${bd_ansi_fg}m \\\e[${bd_ansi_format};${bd_ansi_bg};${bd_ansi_fg}m \e[0m"
+                echo -ne "\033[${bd_ansi_format};${bd_ansi_bg};${bd_ansi_fg}m \\\033[${bd_ansi_format};${bd_ansi_bg};${bd_ansi_fg}m \033[0m"
             done
             echo
         done
@@ -287,14 +287,14 @@ _bd_ansi_chart_16() {
 # display background 16 color chart of echo -ne pastable strings
 _bd_ansi_chart_16_bg() {
     for bd_ansi_bg in {40..47} {100..107}; do
-        echo -ne "\e[${bd_ansi_bg}m \\\e[${bd_ansi_bg}m \e[0m" && echo
+        echo -ne "\033[${bd_ansi_bg}m \\\033[${bd_ansi_bg}m \033[0m" && echo
     done
 }
 
 # display foreground 16 color chart of echo -ne pastable strings
 _bd_ansi_chart_16_fg() {
     for bd_ansi_fg in {30..37} {90..97}; do
-        echo -ne "\e[${bd_ansi_fg}m \\\e[${bd_ansi_fg}m \e[0m" && echo
+        echo -ne "\033[${bd_ansi_fg}m \\\033[${bd_ansi_fg}m \033[0m" && echo
     done
 }
 
@@ -306,7 +306,7 @@ _bd_ansi_chart_256() {
 # display background 256 color chart of echo -ne pastable strings
 _bd_ansi_chart_256_bg() {
     for bd_ansi_color in {0..255}; do
-        echo -ne "\e[48;5;${bd_ansi_color}m \\\e[48;5;${bd_ansi_color}m \e[0m"
+        echo -ne "\033[48;5;${bd_ansi_color}m \\\033[48;5;${bd_ansi_color}m \033[0m"
         if [ $(((bd_ansi_color + 1) % 6)) == 4 ]; then
             echo
         fi
@@ -316,7 +316,7 @@ _bd_ansi_chart_256_bg() {
 # display foreground 256 color chart of echo -ne pastable strings
 _bd_ansi_chart_256_fg() {
     for bd_ansi_color in {0..255}; do
-        echo -ne "\e[38;5;${bd_ansi_color}m \\\e[38;5;${bd_ansi_color}m \e[0m"
+        echo -ne "\033[38;5;${bd_ansi_color}m \\\033[38;5;${bd_ansi_color}m \033[0m"
         if [ $(((bd_ansi_color + 1) % 6)) == 4 ]; then
             echo
         fi
