@@ -27,7 +27,7 @@
 #
 # https://github.com/bash-d/bd/blob/main/LICENSE.md
 
-BD_VERSION=0.46.2.3
+BD_VERSION=0.46.2.4
 
 #
 # init
@@ -393,13 +393,14 @@ _bd_init() {
             # reset environment for interactive or login shells
             _bd_debug "reset environment; sourced by = ${_bash_source}" 5
 
-            while IFS='=' read -r _bd_variable_name _bd_variable_value; do
+            env | while IFS='=' read -r _bd_variable_name _bd_variable_value; do
                 [ "${_bd_variable_name}" == "" ] && continue
                 if [[ ${_bd_variable_name} == '_BD'* ]] || [[ ${_bd_variable_name} == '_bd'* ]]; then
                     _bd_debug "unset -v ${_bd_variable_name}" 15
                     unset -v ${_bd_variable_name}
                 fi
-            done < <(env)
+            done
+
             unset -v _bd_variable_name _bd_variable_value
 
             break
