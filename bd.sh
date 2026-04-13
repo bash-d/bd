@@ -393,13 +393,13 @@ _bd_init() {
             # reset environment for interactive or login shells
             _bd_debug "reset environment; sourced by = ${_bash_source}" 5
 
-            env | while IFS='=' read -r _bd_variable_name _bd_variable_value; do
+            while IFS='=' read -r _bd_variable_name _bd_variable_value; do
                 [ "${_bd_variable_name}" == "" ] && continue
                 if [[ ${_bd_variable_name} == '_BD'* ]] || [[ ${_bd_variable_name} == '_bd'* ]]; then
                     _bd_debug "unset -v ${_bd_variable_name}" 15
                     unset -v ${_bd_variable_name}
                 fi
-            done
+            done <<< "$(env)"
 
             unset -v _bd_variable_name _bd_variable_value
 
