@@ -56,7 +56,7 @@ if [ "${USER}" != "root" ]; then
             if [ ${#BD_ROOT_SUDO_BIN} -gt 0 ] && [ -x "${BD_ROOT_SUDO_BIN}" ]; then
                 export BD_ROOT_SUDO_NOPASSWD=0
 
-                if (${BD_ROOT_SUDO_BIN} -vn && ${BD_ROOT_SUDO_BIN} -ln) 2>&1 | grep -qv 'may not' &> /dev/null; then
+                if ${BD_ROOT_SUDO_BIN} -n true &> /dev/null; then
                     BD_ROOT_SUDO_NOPASSWD=1
                 fi
 
