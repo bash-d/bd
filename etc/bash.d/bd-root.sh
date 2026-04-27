@@ -53,7 +53,7 @@ if [ "${USER}" != "root" ]; then
     if [ ${#BD_ROOT_BASH_BIN} -gt 0 ] && [ -x "${BD_ROOT_BASH_BIN}" ]; then
         # bash init file must be readable
         if [ "${BD_BASH_INIT_FILE}" != "" ] && [ -r "${BD_BASH_INIT_FILE}" ]; then
-            if [ ${#BD_ROOT_SUDO_BIN} -gt 0 ] && [ -x "${BD_ROOT_SUDO_BIN}" ]; then
+            if [ -x "${BD_ROOT_SUDO_BIN}" ]; then
                 export BD_ROOT_SUDO_NOPASSWD=0
 
                 if ${BD_ROOT_SUDO_BIN} -n true &> /dev/null; then
