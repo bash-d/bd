@@ -43,7 +43,7 @@ fi
 export BD_DEBUG=0
 
 if [ "${USER}" == "root" ]; then
-    # support root (sudo) & bd-root aliases
+    # support root & bd-root aliases
 
     [ ${#BD_HOME} -gt 0 ] && [ -r "${BD_HOME}/.bd" ] && export BD_DIR="${BD_HOME}/.bd" && [ -r ${BD_DIR}/bd.sh ] && source ${BD_DIR}/bd.sh ${@}
 else
