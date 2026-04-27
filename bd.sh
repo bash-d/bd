@@ -703,7 +703,7 @@ _bd_namespace_init() {
 
     [ "${EUID}" == '0' ] && USER=root
 
-    [ "${USER}" != 'root' ] && unset BD_USER # honor sudo --preserve-env=BD_USER
+    [ "${USER}" != 'root' ] && unset BD_USER
 
     # preferred order of sources for BD_USER
     [ ${#BD_USER} -eq 0 ] && [ "${USER}" == 'root' ] && type -P logname &> /dev/null && BD_USER=$(logname 2> /dev/null) # hack; only use logname for root?
@@ -717,7 +717,7 @@ _bd_namespace_init() {
 
     [ ${#USER} -eq 0 ] && [ ${#BD_USER} -gt 0 ] && USER=${BD_USER}
 
-    [ "${USER}" != 'root' ] && unset BD_HOME # honor sudo --preserve-env=BD_HOME
+    [ "${USER}" != 'root' ] && unset BD_HOME
 
     [ ${#BD_USER} -eq 0 ] && BD_HOME="/tmp"
 
