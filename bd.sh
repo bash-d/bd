@@ -76,12 +76,20 @@ fi
 
 # mimic ksh/zsh function autoload
 _bd_autoload() {
-    ''
+    :
 }
 
 # start the autoloader procedure
 _bd_autoloader() {
     _bd_debug "${FUNCNAME}(${@})" 55
+
+    if [ -n "${_BD_AUTOLOADER_ACTIVE}" ]; then
+        _bd_debug "${FUNCNAME}(${@}) already active; skipping" 10
+        return 0
+    fi
+
+    echo export _BD_AUTOLOADER_ACTIVE=1
+    export _BD_AUTOLOADER_ACTIVE=1
 
     local bd_start_arg="${1}"
     [ ${#bd_start_arg} -gt 0 ] && _bd_debug "bd_start_arg=${bd_start_arg}" 2
@@ -100,6 +108,9 @@ _bd_autoloader() {
     # directory autoloader array
 
     _bd_autoloader_execute_array "${BD_AUTOLOADER_DIRS[@]}"
+
+    echo unset -v _BD_AUTOLOADER_ACTIVE
+    unset -v _BD_AUTOLOADER_ACTIVE
 
     return $?
 }
