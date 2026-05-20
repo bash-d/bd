@@ -54,10 +54,14 @@ if [ "${USER}" != "root" ]; then
         # bash init file must be readable
         if [ "${BD_BASH_INIT_FILE}" != "" ] && [ -r "${BD_BASH_INIT_FILE}" ]; then
             if [ -x "${BD_ROOT_SUDO_BIN}" ]; then
-                export BD_ROOT_SUDO_NOPASSWD=0
+                export BD_ROOT_SUDO_NOPASSWD
 
-                if ${BD_ROOT_SUDO_BIN} -n true &> /dev/null; then
-                    BD_ROOT_SUDO_NOPASSWD=1
+                if [ "${BD_ROOT_SUDO_NOPASSWD}" != "1" ]; then
+                    BD_ROOT_SUDO_NOPASSWD=0
+
+                    if ${BD_ROOT_SUDO_BIN} -u root -n true &> /dev/null; then
+                        BD_ROOT_SUDO_NOPASSWD=1
+                    fi
                 fi
 
                 export BD_ROOT_SUDO_MUST_PRESERVE_ENV="BD_HOME,BD_USER"
