@@ -40,27 +40,37 @@ fi
 # prevent loading multiple times
 [ "${BD_ANSI_SOURCED}" == "1" ] && return
 
-# exit/return for terms that may not support following functions
-case "${TERM}" in
-    alacritty* | ansi* | *color | screen* | *tmux* | *xterm*) ;;
-    *)
-        if [ "${0}" == "${BASH_SOURCE}" ]; then
-            exit
-        else
-            return
-        fi
-        ;;
-esac
-
 #
 # functions
 #
 
 # echo ansi codes using common names
 _bd_ansi() {
+
     local bd_ansi="${1}"
 
     [ ${#bd_ansi} -eq 0 ] && return 0
+
+    # TERM capability guard
+    if [ "${bd_ansi}" == "_supports_term" ]; then
+        case "${TERM}" in
+            alacritty* | ansi* | *color | screen* | *tmux* | *xterm*)
+                return 0
+                ;;
+            *)
+                return 1
+                ;;
+        esac
+    fi
+
+    # simply print the original input for unsupported terminals
+    if ! _bd_ansi _supports_term; then
+        if [ "${2}" != "" ]; then
+            shift
+            printf "%s\n" "${*}"
+        fi
+        return 0
+    fi
 
     # https://en.wikipedia.org/wiki/ANSI_escape_code
 
@@ -322,5 +332,9 @@ _bd_ansi_chart_256_fg() {
         fi
     done
 }
+
+#
+# main
+#
 
 export BD_ANSI_SOURCED=1
