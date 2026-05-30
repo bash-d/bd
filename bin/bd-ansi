@@ -51,9 +51,35 @@ _bd_ansi_usage() {
 
 [ ! -r "${BD_DIR}/etc/bash.d/bd-ansi.sh" ] && printf "\naborting ... ${BD_DIR}/etc/bash.d/bd-ansi.sh file not found readable\n\n" && exit 1
 
-source "${BD_DIR}/etc/bash.d/bd-ansi.sh"
+# disable ansi output for terms that may not support ansi output
+BD_ANSI_SUPPORTED_TERM=1
+case "${TERM}" in
+    alacritty* | ansi* | *color | screen* | *tmux* | *xterm*) ;;
+    *)
+        BD_ANSI_SUPPORTED_TERM=0
+        ;;
+esac
 
 [ "${1}" == "" ] && _bd_ansi_usage
+
+if [ ${BD_ANSI_SUPPORTED_TERM} -eq 0 ]; then
+    case "${1}" in
+        help | --help | usage)
+            _bd_ansi_usage
+            ;;
+        chart | chart_16 | chart_16_bg | chart_16_fg | chart_256 | chart_256_bg | chart_256_fg)
+            printf "\n${BASH_SOURCE} | NOTICE | ansi color charts are unavailable for TERM='${TERM}'\n\n"
+            exit 0
+            ;;
+        *)
+            shift
+            printf "%s\n" "${*}"
+            exit 0
+            ;;
+    esac
+fi
+
+. "${BD_DIR}/etc/bash.d/bd-ansi.sh"
 
 BD_ANSI_FUNCTION=0
 
