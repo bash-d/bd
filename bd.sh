@@ -208,7 +208,11 @@ _bd_autoloader_execute_array() {
 
     local bd_autoloader_dir_name bd_autoloader_finish bd_autoloader_start bd_autoloader_total bd_autoloader_total_ms
 
+    export _BD_DIR_COLOR=40
+
     for bd_autoloader_dir_name in "${@}"; do
+        ((_BD_DIR_COLOR++))
+
         [ ${#BD_DEBUG} -gt 0 ] && bd_autoloader_start=$(_bd_uptime)
 
         _bd_autoloader_execute "${bd_autoloader_dir_name}"
@@ -220,6 +224,8 @@ _bd_autoloader_execute_array() {
             _bd_debug "_bd_autoloader_execute ${bd_autoloader_dir_name} ${bd_autoloader_total_ms}"
         fi
     done
+
+    unset -v _BD_DIR_COLOR
 }
 export -f _bd_autoloader_execute_array
 
