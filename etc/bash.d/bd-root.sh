@@ -75,11 +75,15 @@ if [ "${USER}" != "root" ]; then
 
                 WAYLAND_DISPLAY_DIRNAME="${WAYLAND_DISPLAY%/*}"
 
-                if [ "${WAYLAND_DISPLAY_DIRNAME}" != "" ] && [ "${XDG_RUNTIME_DIR}" != "" ]; then
+                if [ "${WAYLAND_DISPLAY_DIRNAME}" != "${XDG_RUNTIME_DIR}" ]; then
                     BD_ROOT_SUDO_WAYLAND_DISPLAY="WAYLAND_DISPLAY=${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY} "
                     BD_ROOT_SUDO_WAYLAND_DISPLAY="${BD_ROOT_SUDO_WAYLAND_DISPLAY//\/\//\/}"
                 fi
                 unset -v WAYLAND_DISPLAY_DIRNAME
+
+                if [ "${BD_ROOT_SUDO_WAYLAND_DISPLAY}" == "" ] && [ "${WAYLAND_DISPLAY}" != "" ]; then
+                    BD_ROOT_SUDO_WAYLAND_DISPLAY="WAYLAND_DISPLAY=${WAYLAND_DISPLAY} "
+                fi
 
                 [ -n "${WAYLAND_DISPLAY}" ] && BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",WAYLAND_DISPLAY"
 
