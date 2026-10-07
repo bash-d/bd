@@ -71,12 +71,17 @@ if [ "${USER}" != "root" ]; then
 
                 BD_ROOT_SUDO_MUST_PRESERVE_ENV="${BD_ROOT_SUDO_MUST_PRESERVE_ENV//,,/,}"
 
-                export BD_ROOT_SUDO_WAYLAND_DISPLAY=""
-                if [ "${WAYLAND_DISPLAY}" != "" ] && [ "${XDG_RUNTIME_DIR}" != "" ]; then
+                export BD_ROOT_SUDO_WAYLAND_DISPLAY=''
+
+                WAYLAND_DISPLAY_DIRNAME="${WAYLAND_DISPLAY%/*}"
+
+                if [ "${WAYLAND_DISPLAY_DIRNAME}" != "" ] && [ "${XDG_RUNTIME_DIR}" != "" ]; then
                     BD_ROOT_SUDO_WAYLAND_DISPLAY="WAYLAND_DISPLAY=${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY} "
                     BD_ROOT_SUDO_WAYLAND_DISPLAY="${BD_ROOT_SUDO_WAYLAND_DISPLAY//\/\//\/}"
-                    BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",WAYLAND_DISPLAY"
                 fi
+                unset -v WAYLAND_DISPLAY_DIRNAME
+
+                [ -n "${WAYLAND_DISPLAY}" ] && BD_ROOT_SUDO_MUST_PRESERVE_ENV+=",WAYLAND_DISPLAY"
 
                 alias bd-root="${BD_ROOT_SUDO_WAYLAND_DISPLAY}${BD_ROOT_SUDO_BIN} --preserve-env=${BD_ROOT_SUDO_MUST_PRESERVE_ENV} -u root ${BD_ROOT_BASH_BIN} --init-file ${BD_BASH_INIT_FILE}"
                 alias bd-root-login="${BD_ROOT_SUDO_WAYLAND_DISPLAY}${BD_ROOT_SUDO_BIN} --preserve-env=${BD_ROOT_SUDO_MUST_PRESERVE_ENV} -u root --login"

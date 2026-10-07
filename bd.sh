@@ -27,7 +27,7 @@
 #
 # https://github.com/bash-d/bd/blob/main/LICENSE.md
 
-BD_VERSION=0.46.2.4
+BD_VERSION=0.46.2.5
 
 #
 # init

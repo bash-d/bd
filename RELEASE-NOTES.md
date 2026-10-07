@@ -1,3 +1,16 @@
+# 0.46.2.5
+- bd-root.sh: fixed WAYLAND_DISPLAY preservation logic
+
+# 0.46.2.4
+- bd.sh: added _bd_init()
+- bd.sh: added _BD_DIR_COLOR counter
+- bd.sh: moved TERM capability guard to improve TERM handling
+- bd.sh: enhanced executable and function logic parity
+- bd.sh: test for sudo less frequently
+- bd.sh: updated _bd_init to support bash 3
+- bd.sh: changed \e to \033 to support macos bash 3
+- bd.sh: updated to use older bash 3 construct for macos
+
 # 0.46.2.3
 - bd.sh: added _bd_init()
 
